@@ -1,0 +1,31 @@
+{
+  "name": "13_devsignBackend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "seed": "node seed.js",
+    "start": "node server.js",
+    "start:watch": "nodemon server.js",
+    "test": "jest --verbose",
+    "test:watch": "npm run test -- --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "auth0": "^2.15.0",
+    "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
+    "jwks-rsa": "^1.4.0",
+    "mongoose": "^5.4.19"
+  },
+  "devDependencies": {
+    "chance": "^1.0.18",
+    "dotenv": "^7.0.0",
+    "eslint": "^5.15.1",
+    "jest": "^24.5.0",
+    "nodemon": "^1.18.10",
+    "supertest": "^4.0.0"
+  }
+}
