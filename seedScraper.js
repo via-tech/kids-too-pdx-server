@@ -1,4 +1,4 @@
-const eventScraper = require('./lib/services/datascraper');
+const eventScraper = require('./lib/services/saturdayAcademy');
 
 eventScraper()
   .then(events => {
