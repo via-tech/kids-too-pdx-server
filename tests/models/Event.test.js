@@ -32,6 +32,7 @@ describe('Event model', () => {
         __v: expect.any(Number),
         user: 'kidstoopdx@email.com',
         name: 'KidsToo PDX',
+        image: 'https://paintncreate.com/wp-content/uploads/2018/03/Emoji-Week.png',
         date: expect.any(Date),
         location: {
           name: 'Tualatin Rec Center',
