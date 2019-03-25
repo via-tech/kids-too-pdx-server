@@ -21,11 +21,14 @@ describe('Event model', () => {
         zip: 97062
       },
       time: '5pm',
-      price: 25,
-      age: 12,
-      pending: true,
+      price: '25',
+      age: 'Pre-K',
       category: 'sports',
-      likes: 100
+      likes: 100,
+      organization: {
+        name: 'THPRC',
+        number: '503-555-1234'
+      }
     })
       .then(event => expect(event.toJSON()).toEqual({
         _id: expect.any(Object),
@@ -40,11 +43,14 @@ describe('Event model', () => {
           zip: 97062
         },
         time: '5pm',
-        price: 25,
-        age: 12,
-        pending: true,
+        price: '25',
+        age: 'Pre-K',
         category: 'sports',
-        likes: 100
+        likes: 100,
+        organization: {
+          name: 'THPRC',
+          number: '503-555-1234'
+        }
       }));
   });
 });

@@ -7,5 +7,5 @@ const app = require('./lib/app');
 const PORT = process.env.PORT || 7891;
 
 app.listen(PORT, () => {
-  console.log('RUNNING');
+  console.log(`RUNNING ON PORT ${PORT}`);
 });
