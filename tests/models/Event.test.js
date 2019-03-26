@@ -24,11 +24,7 @@ describe('Event model', () => {
       price: '25',
       age: 'Pre-K',
       category: 'sports',
-      likes: 100,
-      organization: {
-        name: 'THPRC',
-        number: '503-555-1234'
-      }
+      likes: 100
     })
       .then(event => expect(event.toJSON()).toEqual({
         _id: expect.any(Object),
@@ -46,11 +42,7 @@ describe('Event model', () => {
         price: '25',
         age: 'Pre-K',
         category: 'sports',
-        likes: 100,
-        organization: {
-          name: 'THPRC',
-          number: '503-555-1234'
-        }
+        likes: 100
       }));
   });
 });
