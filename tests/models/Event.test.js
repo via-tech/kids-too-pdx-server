@@ -21,8 +21,9 @@ describe('Event model', () => {
         zip: 97062
       },
       time: '5pm',
-      price: '25',
-      age: 'Pre-K',
+      price: 25,
+      ageMin: 3,
+      ageMax: 5,
       category: 'sports',
       likes: 100
     })
@@ -39,8 +40,9 @@ describe('Event model', () => {
           zip: 97062
         },
         time: '5pm',
-        price: '25',
-        age: 'Pre-K',
+        price: 25,
+        ageMin: 3,
+        ageMax: 5,
         category: 'sports',
         likes: 100
       }));

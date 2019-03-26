@@ -13,8 +13,9 @@ module.exports = (totalEvents = 20, totalReferrals = 10) => {
         zip: 97223
       },
       time: '4pm',
-      price: 25,
-      age: 12,
+      price: chance.integer({ min: 0, max: 900 }),
+      ageMin: chance.integer({ min: 0, max: 9 }),
+      ageMax: chance.integer({ min: 10, max: 18 }),
       description: 'It is a crazy event',
       pending: true,
       category: chance.pickone(['sports', 'arts', 'volunteer']),

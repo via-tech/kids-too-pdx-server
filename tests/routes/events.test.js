@@ -17,7 +17,10 @@ describe('event routes', () => {
         image: 'image.com',
         date: Date.now(),
         description: 'An event hosted by The Org',
-        category: 'arts'
+        category: 'arts',
+        ageMin: 2,
+        ageMax: 14,
+        price: 100
       })
       .then(res => expect(res.body).toEqual({
         _id: expect.any(String),
@@ -27,7 +30,16 @@ describe('event routes', () => {
         image: 'image.com',
         date: expect.any(String),
         description: 'An event hosted by The Org',
-        category: 'arts'
+        category: 'arts',
+        ageMin: 2,
+        ageMax: 14,
+        price: 100
       }));
+  });
+
+  it('filters an event', () => {
+    return request(app)
+      .get('/events/query?ageMin=2&ageMax=14&price=100')
+      .then(res => expect(res.body).toBeDefined());
   });
 });
