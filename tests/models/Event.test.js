@@ -25,11 +25,15 @@ describe('Event model', () => {
       ageMin: 3,
       ageMax: 5,
       category: 'sports',
-      likes: 100
+      likes: 100,
+      contact: {
+        name: 'Me'
+      },
+      reducedRate: true
     })
       .then(event => expect(event.toJSON()).toEqual({
         _id: expect.any(Object),
-        __v: expect.any(Number),
+        __v: 0,
         user: 'kidstoopdx@email.com',
         name: 'KidsToo PDX',
         image: 'https://paintncreate.com/wp-content/uploads/2018/03/Emoji-Week.png',
@@ -45,7 +49,11 @@ describe('Event model', () => {
         ageMax: 5,
         category: 'sports',
         likes: 100,
-        pending: true
+        pending: true,
+        contact: {
+          name: 'Me'
+        },
+        reducedRate: true
       }));
   });
 });
