@@ -51,4 +51,41 @@ describe('event routes', () => {
       .get('/events')
       .then(res => expect(res.body).toBeDefined());
   });
+
+  it('gets event by id', () => {
+    return request(app)
+      .post('/events')
+      .send({
+        user: '123456',
+        pending: false,
+        name: 'The Event',
+        image: 'image.com',
+        date: Date.now(),
+        price: 100,
+        ageMin: 2,
+        ageMax: 8
+      })
+      .then(createdRes => {
+        return request(app)
+          .get(`/events/${createdRes.body._id}`)
+          .then(getRes => expect(getRes.body).toEqual({
+            user: '123456',
+            pending: false,
+            name: 'The Event',
+            image: 'image.com',
+            date: expect.any(String),
+            price: 100,
+            ageMin: 2,
+            ageMax: 8,
+            _id: expect.any(String),
+            __v: expect.any(Number)
+          }));
+      });
+  });
+
+  it('get pending events', () => {
+    return request(app)
+      .get('/events/pending')
+      .then(res => expect(res.body).toBeDefined());
+  });
 });
