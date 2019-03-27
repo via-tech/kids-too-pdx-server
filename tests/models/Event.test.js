@@ -44,7 +44,8 @@ describe('Event model', () => {
         ageMin: 3,
         ageMax: 5,
         category: 'sports',
-        likes: 100
+        likes: 100,
+        pending: true
       }));
   });
 });

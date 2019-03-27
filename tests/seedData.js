@@ -17,9 +17,9 @@ module.exports = (totalEvents = 20, totalReferrals = 10) => {
       ageMin: chance.integer({ min: 0, max: 9 }),
       ageMax: chance.integer({ min: 10, max: 18 }),
       description: 'It is a crazy event',
-      pending: true,
       category: chance.pickone(['sports', 'arts', 'volunteer']),
-      likes: 100
+      likes: 100,
+      pending: chance.pickone([true, false])
     })))
     .then(events => Promise.all([...Array(totalReferrals)].map(() => 
       Referral.create({
