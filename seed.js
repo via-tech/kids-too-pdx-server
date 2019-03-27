@@ -19,4 +19,3 @@ Promise.all([
   .then(()=>console.log('done'))
   .catch(err => console.error(err))
   .finally(() => mongoose.connection.close());
-  
