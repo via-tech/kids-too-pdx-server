@@ -83,9 +83,15 @@ describe('event routes', () => {
       });
   });
 
-  it('get pending events', () => {
+  it('gets pending events', () => {
     return request(app)
       .get('/events/pending')
+      .then(res => expect(res.body).toBeDefined());
+  });
+
+  it('gets approved events', () => {
+    return request(app)
+      .get('/events/approved')
       .then(res => expect(res.body).toBeDefined());
   });
 });
