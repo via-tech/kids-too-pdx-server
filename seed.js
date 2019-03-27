@@ -1,12 +1,12 @@
 require('dotenv').config();
 require('./lib/utils/connect')();
 const mongoose = require('mongoose');
-const dataSA = require('./lib/utils/csvParser');
-const art = require('./lib/utils/artsParser');
-const library = require('./lib/services/libraryScraper');
-const pdxparent = require('./lib/services/pdxParent');
-const { getParksAndRec } = require('./lib/services/parksAndRec');
-const { getNonProfit } = require('./lib/services/nonProfit');
+const dataSA = require('./lib/utils/parsers/csvParser');
+const art = require('./lib/utils/parsers/artsParser');
+const library = require('./lib/services/data/scrapers/libraryScraper');
+const pdxparent = require('./lib/services/data/parsed/pdxParent');
+const { getParksAndRec } = require('./lib/services/data/parsed/parksAndRec');
+const { getNonProfit } = require('./lib/services/data/parsed/nonProfit');
 
 Promise.all([
   art(), 
