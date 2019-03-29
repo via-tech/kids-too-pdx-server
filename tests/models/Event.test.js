@@ -36,7 +36,7 @@ describe('Event model', () => {
         __v: 0,
         user: 'kidstoopdx@email.com',
         name: 'KidsToo PDX',
-        image: 'https://paintncreate.com/wp-content/uploads/2018/03/Emoji-Week.png',
+        image: 'https://www.kids-partycabin.com/images/601xNxkids-party-ideas.jpg.pagespeed.ic.BcdgHRTk4x.jpg',
         date: expect.any(Date),
         location: {
           name: 'Tualatin Rec Center',
@@ -49,7 +49,6 @@ describe('Event model', () => {
         ageMax: 5,
         category: 'sports',
         likes: 100,
-        pending: true,
         contact: {
           name: 'Me'
         },
