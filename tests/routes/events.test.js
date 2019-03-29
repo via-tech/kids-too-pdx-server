@@ -36,7 +36,6 @@ describe('event routes', () => {
         ageMin: 2,
         ageMax: 14,
         price: 100,
-        pending: true
       }));
   });
 
