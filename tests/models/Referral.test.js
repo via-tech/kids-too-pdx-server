@@ -8,7 +8,7 @@ describe('Referral model', () => {
   
   afterAll(done => {
     mongoose.connection.dropDatabase()
-      .then(() =>mongoose.connection.close(done));
+      .then(() => mongoose.connection.close(done));
   });
 
   it('creates a referral', () => {
