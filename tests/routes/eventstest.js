@@ -4,7 +4,6 @@ const app = require('../../lib/app');
 const connect = require('../../lib/utils/connect');
 const mongoose = require('mongoose');
 
-jest.mock('../../lib/services/auth.js');
 describe('event routes', () => {
   beforeAll(() => connect());
 

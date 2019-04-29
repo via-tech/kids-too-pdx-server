@@ -1,8 +1,6 @@
 const request = require('supertest');
 const app = require('../../lib/app');
 
-jest.mock('../../lib/services/auth.js');
-
 describe('auth routes', () => {
   let user = null;
 
@@ -10,8 +8,8 @@ describe('auth routes', () => {
     return request(app)
       .post('/auth')
       .send({
-        username: '12345',
-        email: 'blah@email.com',
+        username: 'theOrg123',
+        email: 'theorg@email.com',
         password: 'passittothewordyo',
         name: 'The Org'
       })

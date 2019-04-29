@@ -6,9 +6,10 @@ const Event = require('../../lib/models/Event');
 describe('Event model', () => {
   beforeAll(() => connect());
 
-  beforeEach(() => mongoose.connection.dropDatabase());
-
-  afterAll(done => mongoose.connection.close(done));
+  afterAll(done => {
+    mongoose.connection.dropDatabase()
+      .then(() =>mongoose.connection.close(done));
+  });
 
   it('creates an event', () => {
     return Event.create({
