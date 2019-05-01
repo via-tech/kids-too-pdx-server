@@ -76,11 +76,10 @@ describe('event routes', () => {
       .then(res => expect(res.body).toHaveLength(1));
   });
 
-  it.only('gets event by id', () => {
+  it('gets event by id', () => {
     return request(app)
       .post('/events')
       .send({
-        pending: false,
         name: 'The Other Event',
         image: 'image.com',
         date: Date.now(),
@@ -94,7 +93,6 @@ describe('event routes', () => {
           .get(`/events/${createdRes.body._id}`)
           .then(getRes => expect(getRes.body).toEqual({
             user: user.user._id,
-            pending: false,
             name: 'The Other Event',
             image: 'image.com',
             date: expect.any(String),
@@ -105,16 +103,4 @@ describe('event routes', () => {
           }));
       });
   });
-
-  // it('gets pending events', () => {
-  //   return request(app)
-  //     .get('/events/pending')
-  //     .then(res => expect(res.body).toBeDefined());
-  // });
-
-  // it('gets approved events', () => {
-  //   return request(app)
-  //     .get('/events/approved')
-  //     .then(res => expect(res.body).toBeDefined());
-  // });
 });
