@@ -12,7 +12,7 @@ describe('event routes', () => {
       .then(() => mongoose.connection.close(done));
   });
 
-  it.only('posts an event', () => {
+  it('posts an event', () => {
     return request(app)
       .post('/auth/signup')
       .send({

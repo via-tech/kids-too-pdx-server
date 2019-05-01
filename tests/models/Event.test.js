@@ -34,7 +34,6 @@ describe('Event model', () => {
     })
       .then(event => expect(event.toJSON()).toEqual({
         _id: expect.any(Object),
-        __v: 0,
         user: 'kidstoopdx@email.com',
         name: 'KidsToo PDX',
         image: 'https://www.kids-partycabin.com/images/601xNxkids-party-ideas.jpg.pagespeed.ic.BcdgHRTk4x.jpg',
