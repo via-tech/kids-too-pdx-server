@@ -5,15 +5,11 @@ const connect = require('../../lib/utils/connect');
 const mongoose = require('mongoose');
 
 describe('event routes', () => {
-  beforeAll(() => connect());
+  let user = null;
 
-  afterAll(done => {
-    mongoose.connection.dropDatabase()
-      .then(() => mongoose.connection.close(done));
-  });
-
-  it('posts an event', () => {
-    return request(app)
+  beforeAll(done => {
+    connect();
+    request(app)
       .post('/auth/signup')
       .send({
         role: 'org',
@@ -30,19 +26,29 @@ describe('event routes', () => {
         }
       })
       .then(res => {
-        return request(app)
-          .post('/events')
-          .send({
-            name: 'The Org Event',
-            image: 'image.com',
-            date: Date.now(),
-            description: 'An event hosted by The Org',
-            category: 'arts',
-            ageMin: 2,
-            ageMax: 14,
-            price: 100,
-            token: res.body.token
-          });
+        user = res.body;
+        done();
+      });
+  });
+
+  afterAll(done => {
+    mongoose.connection.dropDatabase()
+      .then(() => mongoose.connection.close(done));
+  });
+
+  it('posts an event', () => {
+    return request(app)
+      .post('/events')
+      .send({
+        name: 'The Org Event',
+        image: 'image.com',
+        date: Date.now(),
+        description: 'An event hosted by The Org',
+        category: 'arts',
+        ageMin: 2,
+        ageMax: 14,
+        price: 100,
+        token: user.token
       })
       .then(res => expect(res.body).toEqual({
         _id: expect.any(String),
@@ -61,42 +67,41 @@ describe('event routes', () => {
   it('filters an event', () => {
     return request(app)
       .get('/events/query/q?ageMin=2&ageMax=14&price=100')
-      .then(res => expect(res.body).toBeDefined());
+      .then(res => expect(res.body).toHaveLength(1));
   });
 
   it('gets all events', () => {
     return request(app)
       .get('/events')
-      .then(res => expect(res.body).toBeDefined());
+      .then(res => expect(res.body).toHaveLength(1));
   });
 
-  it('gets event by id', () => {
+  it.only('gets event by id', () => {
     return request(app)
       .post('/events')
       .send({
-        user: '123456',
         pending: false,
-        name: 'The Event',
+        name: 'The Other Event',
         image: 'image.com',
         date: Date.now(),
         price: 100,
         ageMin: 2,
-        ageMax: 8
+        ageMax: 8,
+        token: user.token
       })
       .then(createdRes => {
         return request(app)
           .get(`/events/${createdRes.body._id}`)
           .then(getRes => expect(getRes.body).toEqual({
-            user: '123456',
+            user: user.user._id,
             pending: false,
-            name: 'The Event',
+            name: 'The Other Event',
             image: 'image.com',
             date: expect.any(String),
             price: 100,
             ageMin: 2,
             ageMax: 8,
-            _id: expect.any(String),
-            __v: expect.any(Number)
+            _id: expect.any(String)
           }));
       });
   });
