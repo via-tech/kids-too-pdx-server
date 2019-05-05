@@ -87,10 +87,54 @@ describe('auth routes', () => {
                 city: 'Portland',
                 state: 'OR',
                 zip: '97203'
-              },
+              }
             },
             token: expect.any(String)
           }));
+      });
+  });
+
+  it('updates user info; does not update user role', () => {
+    return createUser('org1234')
+      .then(() => {
+        return request(app)
+          .post('/auth/signin')
+          .send({
+            username: 'org1234',
+            password: 'passit'
+          })
+          .then(userRes => {
+            return request(app)
+              .patch(`/auth/${userRes.body.user._id}`)
+              .send({
+                username: 'orgChanged',
+                role: 'admin',
+                name: 'Changed Org',
+                email: 'thechangedorg@email.com',
+                phone: '555-111-2222',
+                address: {
+                  street: '456 Main St.',
+                  city: 'Los Angeles',
+                  state: 'CA',
+                  zip: '90210'
+                },
+                token: userRes.body.token
+              })
+              .then(patchRes => expect(patchRes.body).toEqual({
+                _id:  expect.any(String),
+                role: 'org',
+                username: 'orgChanged',
+                name: 'Changed Org',
+                email: 'thechangedorg@email.com',
+                phone: '555-111-2222',
+                address: {
+                  street: '456 Main St.',
+                  city: 'Los Angeles',
+                  state: 'CA',
+                  zip: '90210'
+                }
+              }));
+          });
       });
   });
 });
