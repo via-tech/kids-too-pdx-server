@@ -5,7 +5,7 @@ const connect = require('../../lib/utils/connect');
 const mongoose = require('mongoose');
 
 describe('event routes', () => {
-  let user = null;
+  let currentUser = null;
 
   beforeAll(done => {
     connect(process.env.MONGODB_URI_TEST);
@@ -26,7 +26,7 @@ describe('event routes', () => {
         }
       })
       .then(res => {
-        user = res.body;
+        currentUser = res.body;
         done();
       });
   });
@@ -48,7 +48,7 @@ describe('event routes', () => {
         ageMin: 2,
         ageMax: 14,
         price: 100,
-        token: user.token
+        token: currentUser.token
       })
       .then(res => expect(res.body).toEqual({
         _id: expect.any(String),
@@ -86,13 +86,13 @@ describe('event routes', () => {
         price: 100,
         ageMin: 2,
         ageMax: 8,
-        token: user.token
+        token: currentUser.token
       })
       .then(createdRes => {
         return request(app)
           .get(`/events/${createdRes.body._id}`)
           .then(getRes => expect(getRes.body).toEqual({
-            user: user.user._id,
+            user: currentUser.user._id,
             name: 'The Other Event',
             image: 'image.com',
             date: expect.any(String),
@@ -101,6 +101,30 @@ describe('event routes', () => {
             ageMax: 8,
             _id: expect.any(String)
           }));
+      });
+  });
+
+  it('updates price of an event', () => {
+    return request(app)
+      .post('/events')
+      .send({
+        name: 'The Other Other Event',
+        image: 'image.com',
+        date: Date.now(),
+        price: 100,
+        ageMin: 12,
+        ageMax: 18,
+        token: currentUser.token
+      })
+      .then(eventRes => {
+        return request(app)
+          .patch(`/events/${eventRes.body._id}`)
+          .send({
+            price: 200,
+            token: currentUser.token,
+            user: eventRes.user
+          })
+          .then(updatedEvent => expect(updatedEvent.body.price).toEqual(200));
       });
   });
 });
