@@ -7,26 +7,46 @@ const mongoose = require('mongoose');
 describe('event routes', () => {
   let currentUser = null;
 
-  beforeAll(done => {
-    connect(process.env.MONGODB_URI_TEST);
-    request(app)
+  const signupUser = username => {
+    return request(app)
       .post('/auth/signup')
       .send({
         role: 'org',
-        username: 'org2123',
-        password: 'passit2',
-        name: 'The Org2',
-        email: 'theorg2@email.com',
-        phone: '555-123-4568',
+        username,
+        password: 'passit',
+        name: 'The Wrong Org',
+        email: `${username}@email.com`,
+        phone: '555-123-4569',
         address: {
-          street: '124 Main St.',
+          street: '125 Main St.',
           city: 'Portland',
           state: 'OR',
           zip: '97203'
         }
-      })
-      .then(res => {
-        currentUser = res.body;
+      });
+  };
+
+  const createEvent = eventName => {
+    return request(app)
+      .post('/events')
+      .send({
+        name: eventName,
+        image: 'image.com',
+        date: Date.now(),
+        description: 'An event hosted by The Org',
+        category: 'arts',
+        ageMin: 2,
+        ageMax: 14,
+        price: 100,
+        token: currentUser.token
+      });
+  };
+
+  beforeAll(done => {
+    connect(process.env.MONGODB_URI_TEST);
+    signupUser('org123')
+      .then(userRes => {
+        currentUser = userRes.body;
         done();
       });
   });
@@ -37,20 +57,8 @@ describe('event routes', () => {
   });
 
   it('posts an event', () => {
-    return request(app)
-      .post('/events')
-      .send({
-        name: 'The Org Event',
-        image: 'image.com',
-        date: Date.now(),
-        description: 'An event hosted by The Org',
-        category: 'arts',
-        ageMin: 2,
-        ageMax: 14,
-        price: 100,
-        token: currentUser.token
-      })
-      .then(res => expect(res.body).toEqual({
+    return createEvent('The Org Event')
+      .then(eventRes => expect(eventRes.body).toEqual({
         _id: expect.any(String),
         name: 'The Org Event',
         image: 'image.com',
@@ -77,17 +85,7 @@ describe('event routes', () => {
   });
 
   it('gets event by id', () => {
-    return request(app)
-      .post('/events')
-      .send({
-        name: 'The Other Event',
-        image: 'image.com',
-        date: Date.now(),
-        price: 100,
-        ageMin: 2,
-        ageMax: 8,
-        token: currentUser.token
-      })
+    return createEvent('The Other Event')
       .then(createdRes => {
         return request(app)
           .get(`/events/${createdRes.body._id}`)
@@ -96,26 +94,18 @@ describe('event routes', () => {
             name: 'The Other Event',
             image: 'image.com',
             date: expect.any(String),
-            price: 100,
+            description: 'An event hosted by The Org',
+            category: 'arts',
             ageMin: 2,
-            ageMax: 8,
+            ageMax: 14,
+            price: 100,
             _id: expect.any(String)
           }));
       });
   });
 
   it('updates price of an event', () => {
-    return request(app)
-      .post('/events')
-      .send({
-        name: 'The Other Other Event',
-        image: 'image.com',
-        date: Date.now(),
-        price: 100,
-        ageMin: 12,
-        ageMax: 18,
-        token: currentUser.token
-      })
+    return createEvent('The Other Other Event')
       .then(eventRes => {
         return request(app)
           .patch(`/events/${eventRes.body._id}`)
@@ -127,43 +117,10 @@ describe('event routes', () => {
       });
   });
 
-  it.only('denies event update by wrong user', () => {
-    const signupUser = () => {
-      return request(app)
-        .post('/auth/signup')
-        .send({
-          role: 'org',
-          username: 'thewrongone',
-          password: 'passitwrongly',
-          name: 'The Wrong Org',
-          email: 'thewrongorg@email.com',
-          phone: '555-123-4569',
-          address: {
-            street: '125 Main St.',
-            city: 'Portland',
-            state: 'OR',
-            zip: '97203'
-          }
-        });
-    };
-
-    const createEvent = () => {
-      return request(app)
-        .post('/events')
-        .send({
-          name: 'The Right Event',
-          image: 'image.com',
-          date: Date.now(),
-          price: 100,
-          ageMin: 15,
-          ageMax: 30,
-          token: currentUser.token
-        });
-    };
-
-    return createEvent()
+  it('denies event update by wrong user', () => {
+    return createEvent('The Right Event')
       .then(newEvent => {
-        return signupUser()
+        return signupUser('thewronguser')
           .then(newUser => {
             return request(app)
               .patch(`/events/${newEvent.body._id}`)
