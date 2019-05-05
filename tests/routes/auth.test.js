@@ -37,7 +37,6 @@ describe('auth routes', () => {
             curerntUser = userRes.body;
             done();
           });
-
       });
   });
 
@@ -165,5 +164,39 @@ describe('auth routes', () => {
           zip: '90210'
         }
       }));
+  });
+
+  it('updates password', () => {
+    return request(app)
+      .patch(`/auth/${curerntUser.user._id}`)
+      .send({
+        password: 'changedPass',
+        token: curerntUser.token
+      })
+      .then(() => {
+        return request(app)
+          .post('/auth/signin')
+          .send({
+            username: 'orgChanged',
+            password: 'changedPass'
+          })
+          .then(userRes => expect(userRes.body).toEqual({
+            user: {
+              _id: expect.any(String),
+              role: 'org',
+              username: 'orgChanged',
+              name: 'Changed Org',
+              email: 'thechangedorg@email.com',
+              phone: '555-111-2222',
+              address: {
+                street: '456 Main St.',
+                city: 'Los Angeles',
+                state: 'CA',
+                zip: '90210'
+              }
+            },
+            token: expect.any(String)
+          }));
+      });
   });
 });
