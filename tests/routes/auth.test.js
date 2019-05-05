@@ -6,6 +6,7 @@ const app = require('../../lib/app');
 const User = require('../../lib/models/User');
 
 describe('auth routes', () => {
+  let curerntUser = null;
   const createUser = username => User.create({
     role: 'org',
     username,
@@ -22,7 +23,23 @@ describe('auth routes', () => {
   })
     .catch(err => err);
 
-  beforeAll(() => connect());
+  beforeAll(done => {
+    connect();
+    createUser('org1234')
+      .then(() => {
+        return request(app)
+          .post('/auth/signin')
+          .send({
+            username: 'org1234',
+            password: 'passit'
+          })
+          .then(userRes => {
+            curerntUser = userRes.body;
+            done();
+          });
+
+      });
+  });
 
   afterAll(done => {
     mongoose.connection.dropDatabase()
@@ -94,47 +111,59 @@ describe('auth routes', () => {
       });
   });
 
-  it('updates user info; does not update user role', () => {
-    return createUser('org1234')
-      .then(() => {
-        return request(app)
-          .post('/auth/signin')
-          .send({
-            username: 'org1234',
-            password: 'passit'
-          })
-          .then(userRes => {
-            return request(app)
-              .patch(`/auth/${userRes.body.user._id}`)
-              .send({
-                username: 'orgChanged',
-                role: 'admin',
-                name: 'Changed Org',
-                email: 'thechangedorg@email.com',
-                phone: '555-111-2222',
-                address: {
-                  street: '456 Main St.',
-                  city: 'Los Angeles',
-                  state: 'CA',
-                  zip: '90210'
-                },
-                token: userRes.body.token
-              })
-              .then(patchRes => expect(patchRes.body).toEqual({
-                _id:  expect.any(String),
-                role: 'org',
-                username: 'orgChanged',
-                name: 'Changed Org',
-                email: 'thechangedorg@email.com',
-                phone: '555-111-2222',
-                address: {
-                  street: '456 Main St.',
-                  city: 'Los Angeles',
-                  state: 'CA',
-                  zip: '90210'
-                }
-              }));
-          });
-      });
+  it('updates user info', () => {
+    return request(app)
+      .patch(`/auth/${curerntUser.user._id}`)
+      .send({
+        username: 'orgChanged',
+        role: 'admin',
+        name: 'Changed Org',
+        email: 'thechangedorg@email.com',
+        phone: '555-111-2222',
+        address: {
+          street: '456 Main St.',
+          city: 'Los Angeles',
+          state: 'CA',
+          zip: '90210'
+        },
+        token: curerntUser.token
+      })
+      .then(patchRes => expect(patchRes.body).toEqual({
+        _id:  expect.any(String),
+        role: 'org',
+        username: 'orgChanged',
+        name: 'Changed Org',
+        email: 'thechangedorg@email.com',
+        phone: '555-111-2222',
+        address: {
+          street: '456 Main St.',
+          city: 'Los Angeles',
+          state: 'CA',
+          zip: '90210'
+        }
+      }));
+  });
+
+  it('does not update role', () => {
+    return request(app)
+      .patch(`/auth/${curerntUser.user._id}`)
+      .send({
+        role: 'admin',
+        token: curerntUser.token
+      })
+      .then(patchRes => expect(patchRes.body).toEqual({
+        _id:  expect.any(String),
+        role: 'org',
+        username: 'orgChanged',
+        name: 'Changed Org',
+        email: 'thechangedorg@email.com',
+        phone: '555-111-2222',
+        address: {
+          street: '456 Main St.',
+          city: 'Los Angeles',
+          state: 'CA',
+          zip: '90210'
+        }
+      }));
   });
 });
