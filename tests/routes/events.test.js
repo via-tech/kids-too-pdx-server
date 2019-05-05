@@ -121,10 +121,58 @@ describe('event routes', () => {
           .patch(`/events/${eventRes.body._id}`)
           .send({
             price: 200,
-            token: currentUser.token,
-            user: eventRes.user
+            token: currentUser.token
           })
-          .then(updatedEvent => expect(updatedEvent.body.price).toEqual(200));
+          .then(patchedEvent => expect(patchedEvent.body.price).toEqual(200));
+      });
+  });
+
+  it.only('denies event update by wrong user', () => {
+    const signupUser = () => {
+      return request(app)
+        .post('/auth/signup')
+        .send({
+          role: 'org',
+          username: 'thewrongone',
+          password: 'passitwrongly',
+          name: 'The Wrong Org',
+          email: 'thewrongorg@email.com',
+          phone: '555-123-4569',
+          address: {
+            street: '125 Main St.',
+            city: 'Portland',
+            state: 'OR',
+            zip: '97203'
+          }
+        });
+    };
+
+    const createEvent = () => {
+      return request(app)
+        .post('/events')
+        .send({
+          name: 'The Right Event',
+          image: 'image.com',
+          date: Date.now(),
+          price: 100,
+          ageMin: 15,
+          ageMax: 30,
+          token: currentUser.token
+        });
+    };
+
+    return createEvent()
+      .then(newEvent => {
+        return signupUser()
+          .then(newUser => {
+            return request(app)
+              .patch(`/events/${newEvent.body._id}`)
+              .send({
+                price: 1,
+                token: newUser.body.token
+              })
+              .then(patchedEvent => expect(patchedEvent.body).toEqual({ code: 403, message: 'Access denied' }));
+          });
       });
   });
 });
