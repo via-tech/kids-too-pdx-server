@@ -8,7 +8,7 @@ describe('event routes', () => {
   let user = null;
 
   beforeAll(done => {
-    connect();
+    connect(process.env.MONGODB_URI_TEST);
     request(app)
       .post('/auth/signup')
       .send({

@@ -4,7 +4,7 @@ const connect = require('../../lib/utils/connect');
 const User = require('../../lib/models/User');
 
 describe('User model', () => {
-  beforeAll(() => connect());
+  beforeAll(() => connect(process.env.MONGODB_URI_TEST));
 
   afterAll(done => {
     mongoose.connection.dropDatabase()

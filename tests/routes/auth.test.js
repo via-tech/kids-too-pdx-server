@@ -24,7 +24,7 @@ describe('auth routes', () => {
     .catch(err => err);
 
   beforeAll(done => {
-    connect();
+    connect(process.env.MONGODB_URI_TEST);
     createUser('org1234')
       .then(() => {
         return request(app)
