@@ -132,4 +132,16 @@ describe('event routes', () => {
           });
       });
   });
+
+  it('deletes an event', () => {
+    return createEvent('The Deleteable Event')
+      .then(newEvent => {
+        return request(app)
+          .delete(`/events/${newEvent.body._id}`)
+          .send({
+            token: currentUser.token
+          })
+          .then(deletedRes => expect(deletedRes.body).toEqual({ deleted: 1 }));
+      });
+  });
 });
