@@ -4,11 +4,12 @@ const connect = require('../../lib/utils/connect');
 const Event = require('../../lib/models/Event');
 
 describe('Event model', () => {
-  beforeAll(() => connect());
+  beforeAll(() => connect(process.env.MONGODB_URI_TEST));
 
-  beforeEach(() => mongoose.connection.dropDatabase());
-
-  afterAll(done => mongoose.connection.close(done));
+  afterAll(done => {
+    mongoose.connection.dropDatabase()
+      .then(() => mongoose.connection.close(done));
+  });
 
   it('creates an event', () => {
     return Event.create({
@@ -33,7 +34,6 @@ describe('Event model', () => {
     })
       .then(event => expect(event.toJSON()).toEqual({
         _id: expect.any(Object),
-        __v: 0,
         user: 'kidstoopdx@email.com',
         name: 'KidsToo PDX',
         image: 'https://www.kids-partycabin.com/images/601xNxkids-party-ideas.jpg.pagespeed.ic.BcdgHRTk4x.jpg',

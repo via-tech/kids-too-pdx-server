@@ -4,11 +4,12 @@ const connect = require('../../lib/utils/connect');
 const Referral = require('../../lib/models/Referral');
 
 describe('Referral model', () => {
-  beforeAll(() => connect());
+  beforeAll(() => connect(process.env.MONGODB_URI_TEST));
   
-  beforeEach(() => mongoose.connection.dropDatabase());
-
-  afterAll(() => mongoose.connection.close());
+  afterAll(done => {
+    mongoose.connection.dropDatabase()
+      .then(() => mongoose.connection.close(done));
+  });
 
   it('creates a referral', () => {
     return Referral.create({
