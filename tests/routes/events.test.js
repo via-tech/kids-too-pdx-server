@@ -74,7 +74,7 @@ describe('event routes', () => {
 
   it('filters an event', () => {
     return request(app)
-      .get('/events/query/q?ageMin=2&ageMax=14&price=100')
+      .get('/events/query/q?ageMin=1&ageMax=15&price=100')
       .then(res => expect(res.body).toHaveLength(1));
   });
 
