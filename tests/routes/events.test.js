@@ -131,7 +131,7 @@ describe('event routes', () => {
                 price: 1,
                 token: newUser.body.token
               })
-              .then(patchedEvent => expect(patchedEvent.body).toEqual({ code: 403, message: 'Access denied' }));
+              .then(patchedEvent => expect(patchedEvent.body).toEqual({ error: 'Access denied' }));
           });
       });
   });
