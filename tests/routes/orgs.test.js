@@ -28,7 +28,6 @@ describe('orgs routes', () => {
     Promise.all(['org0', 'org1', 'org2', 'org3', 'org4'].map(username => createUser(username)))
       .then(createdOrgs => {
         createdUsers = createdOrgs;
-        console.log('createdUsers', createdUsers);
         done();
       });
   });
@@ -42,5 +41,11 @@ describe('orgs routes', () => {
     return request(app)
       .get('/orgs')
       .then(orgsRes => expect(orgsRes.body).toHaveLength(5));
+  });
+
+  it('deletes organization by id', () => {
+    return request(app)
+      .delete(`/orgs/${createdUsers[3]._id}`)
+      .then(deletedRes => expect(deletedRes.body).toEqual({ deleted: 1 }));
   });
 });
