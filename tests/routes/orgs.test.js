@@ -21,6 +21,10 @@ describe('orgs routes', () => {
       zip: '97203'
     }
   })
+    .then(user => ({
+      user: user.toJSON(),
+      token: user.authToken()
+    }))
     .catch(err => err);
     
   beforeAll(done => {
@@ -44,8 +48,19 @@ describe('orgs routes', () => {
   });
 
   it('deletes organization by id', () => {
+    const { user, token } = createdUsers[3];
     return request(app)
-      .delete(`/orgs/${createdUsers[3]._id}`)
+      .delete(`/orgs/${user._id}`)
+      .send({ token })
       .then(deletedRes => expect(deletedRes.body).toEqual({ deleted: 1 }));
+  });
+
+  it('does not delete organization for wrong user', () => {
+    const { user } = createdUsers[0];
+    const { token } = createdUsers[1];
+    return request(app)
+      .delete(`/orgs/${user._id}`)
+      .send({ token })
+      .then(deletedRes => expect(deletedRes.body).toEqual({ code: 403, message: 'Access denied' }));
   });
 });
