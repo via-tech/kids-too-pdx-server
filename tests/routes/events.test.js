@@ -38,6 +38,7 @@ describe('event routes', () => {
         ageMin: 2,
         ageMax: 14,
         price: 100,
+        liability: true,
         token: currentUser.token
       });
   };
@@ -68,6 +69,7 @@ describe('event routes', () => {
         ageMin: 2,
         ageMax: 14,
         price: 100,
+        liability: true,
         user: expect.any(String)
       }));
   });
@@ -99,6 +101,7 @@ describe('event routes', () => {
             ageMin: 2,
             ageMax: 14,
             price: 100,
+            liability: true,
             _id: expect.any(String)
           }));
       });
@@ -128,7 +131,7 @@ describe('event routes', () => {
                 price: 1,
                 token: newUser.body.token
               })
-              .then(patchedEvent => expect(patchedEvent.body).toEqual({ code: 403, message: 'Access denied' }));
+              .then(patchedEvent => expect(patchedEvent.body).toEqual({ error: 'Access denied' }));
           });
       });
   });

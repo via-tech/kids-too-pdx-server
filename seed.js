@@ -9,14 +9,17 @@ const pdxparent = require('./lib/services/data/parsed/pdxParent');
 const { getParksAndRec } = require('./lib/services/data/parsed/parksAndRec');
 const { getNonProfit } = require('./lib/services/data/parsed/nonProfit');
 
-Promise.all([
-  art(), 
-  dataSA(),
-  pdxparent(),
-  library(),
-  getParksAndRec(),
-  getNonProfit()
-])
-  .then(()=> console.log('done'))
-  .catch(err => console.error(err))
-  .finally(() => mongoose.connection.close());
+mongoose.connection.dropDatabase()
+  .then(() => 
+    Promise.all([
+      art(), 
+      dataSA(),
+      pdxparent(),
+      library(),
+      getParksAndRec(),
+      getNonProfit()
+    ])
+      .then(()=> console.log('done'))
+      .catch(err => console.error(err))
+      .finally(() => mongoose.connection.close())
+  );
