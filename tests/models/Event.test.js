@@ -30,7 +30,8 @@ describe('Event model', () => {
       contact: {
         name: 'Me'
       },
-      reducedRate: true
+      reducedRate: true,
+      liability: true
     })
       .then(event => expect(event.toJSON()).toEqual({
         _id: expect.any(Object),
@@ -52,7 +53,8 @@ describe('Event model', () => {
         contact: {
           name: 'Me'
         },
-        reducedRate: true
+        reducedRate: true,
+        liability: true
       }));
   });
 });
