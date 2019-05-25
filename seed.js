@@ -8,10 +8,12 @@ const library = require('./lib/services/data/scrapers/libraryScraper');
 const pdxparent = require('./lib/services/data/parsed/pdxParent');
 const { getParksAndRec } = require('./lib/services/data/parsed/parksAndRec');
 const { getNonProfit } = require('./lib/services/data/parsed/nonProfit');
+const testUser = require('./lib/services/data/testUser');
 
 mongoose.connection.dropDatabase()
   .then(() => 
     Promise.all([
+      testUser(),
       art(), 
       dataSA(),
       pdxparent(),
