@@ -7,8 +7,8 @@ const User = require('../../lib/models/User');
 
 describe('orgs routes', () => {
   let createdUsers = null;
-  const createUser = username => User.create({
-    role: 'org',
+  const createUser = (username, role = 'org') => User.create({
+    role,
     username,
     password: 'passit',
     name: 'The Org',
@@ -41,10 +41,13 @@ describe('orgs routes', () => {
       .then(() => mongoose.connection.close(done));
   });
 
-  it('gets a list of all organizations', () => {
-    return request(app)
-      .get('/orgs')
-      .then(orgsRes => expect(orgsRes.body).toHaveLength(5));
+  it('gets a list of all organizations, not all users', () => {
+    return createUser('org5', 'inactive')
+      .then(() =>
+        request(app)
+          .get('/orgs')
+          .then(orgsRes => expect(orgsRes.body).toHaveLength(5))
+      );
   });
 
   it('deletes organization by id', () => {
