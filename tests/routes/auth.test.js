@@ -128,7 +128,7 @@ describe('auth routes', () => {
         token: curerntUser.token
       })
       .then(patchRes => expect(patchRes.body).toEqual({
-        _id:  expect.any(String),
+        _id: expect.any(String),
         role: 'org',
         username: 'orgChanged',
         name: 'Changed Org',
@@ -151,7 +151,7 @@ describe('auth routes', () => {
         token: curerntUser.token
       })
       .then(patchRes => expect(patchRes.body).toEqual({
-        _id:  expect.any(String),
+        _id: expect.any(String),
         role: 'org',
         username: 'orgChanged',
         name: 'Changed Org',
@@ -197,6 +197,29 @@ describe('auth routes', () => {
             },
             token: expect.any(String)
           }));
+      });
+  });
+
+  it('does not update the wrong user', () => {
+    return request(app)
+      .post('/auth/signup')
+      .send({
+        role: 'org',
+        username: 'hacker123',
+        password: 'hackpass',
+        phone: '503-888-9999',
+        email: 'hackeremail@email.com'
+      })
+      .then(hackerUser => {
+        return request(app)
+          .patch(`/auth/${curerntUser.user._id}`)
+          .send({
+            name: 'Hacker Org',
+            phone: '503-555-1234',
+            username: 'hackerOrg',
+            token: hackerUser.body.token
+          })
+          .then(patchedRes => expect(patchedRes.body).toEqual({ error: 'Access denied' }));
       });
   });
 });
