@@ -54,7 +54,7 @@ describe('orgs routes', () => {
     const { user, token } = createdUsers[3];
     return request(app)
       .delete(`/orgs/${user._id}`)
-      .send({ token })
+      .set('Authorization', `Bearer ${token}`)
       .then(deletedRes => expect(deletedRes.body).toEqual({ deleted: 1 }));
   });
 
@@ -63,7 +63,7 @@ describe('orgs routes', () => {
     const { token } = createdUsers[1];
     return request(app)
       .delete(`/orgs/${user._id}`)
-      .send({ token })
+      .set('Authorization', `Bearer ${token}`)
       .then(deletedRes => expect(deletedRes.body).toEqual({ code: 403, message: 'Access denied' }));
   });
 });

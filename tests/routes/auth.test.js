@@ -6,7 +6,7 @@ const app = require('../../lib/app');
 const User = require('../../lib/models/User');
 
 describe('auth routes', () => {
-  let curerntUser = null;
+  let currentUser = null;
   const createUser = username => User.create({
     role: 'org',
     username,
@@ -34,7 +34,7 @@ describe('auth routes', () => {
             password: 'passit'
           })
           .then(userRes => {
-            curerntUser = userRes.body;
+            currentUser = userRes.body;
             done();
           });
       });
@@ -112,7 +112,8 @@ describe('auth routes', () => {
 
   it('updates user info', () => {
     return request(app)
-      .patch(`/auth/${curerntUser.user._id}`)
+      .patch(`/auth/${currentUser.user._id}`)
+      .set('Authorization', `Bearer ${currentUser.token}`)
       .send({
         username: 'orgChanged',
         role: 'admin',
@@ -124,8 +125,7 @@ describe('auth routes', () => {
           city: 'Los Angeles',
           state: 'CA',
           zip: '90210'
-        },
-        token: curerntUser.token
+        }
       })
       .then(patchRes => expect(patchRes.body).toEqual({
         _id: expect.any(String),
@@ -145,10 +145,10 @@ describe('auth routes', () => {
 
   it('does not update role', () => {
     return request(app)
-      .patch(`/auth/${curerntUser.user._id}`)
+      .patch(`/auth/${currentUser.user._id}`)
+      .set('Authorization', `Bearer ${currentUser.token}`)
       .send({
-        role: 'admin',
-        token: curerntUser.token
+        role: 'admin'
       })
       .then(patchRes => expect(patchRes.body).toEqual({
         _id: expect.any(String),
@@ -168,10 +168,10 @@ describe('auth routes', () => {
 
   it('updates password', () => {
     return request(app)
-      .patch(`/auth/${curerntUser.user._id}`)
+      .patch(`/auth/${currentUser.user._id}`)
+      .set('Authorization', `Bearer ${currentUser.token}`)
       .send({
-        password: 'changedPass',
-        token: curerntUser.token
+        password: 'changedPass'
       })
       .then(() => {
         return request(app)
@@ -212,12 +212,12 @@ describe('auth routes', () => {
       })
       .then(hackerUser => {
         return request(app)
-          .patch(`/auth/${curerntUser.user._id}`)
+          .patch(`/auth/${currentUser.user._id}`)
+          .set('Authorization', `Bearer ${hackerUser.body.token}`)
           .send({
             name: 'Hacker Org',
             phone: '503-555-1234',
-            username: 'hackerOrg',
-            token: hackerUser.body.token
+            username: 'hackerOrg'
           })
           .then(patchedRes => expect(patchedRes.body).toEqual({ error: 'Access denied' }));
       });
