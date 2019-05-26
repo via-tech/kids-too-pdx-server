@@ -29,6 +29,7 @@ describe('event routes', () => {
   const createEvent = eventName => {
     return request(app)
       .post('/events')
+      .set('Authorization', `Bearer ${currentUser.token}`)
       .send({
         name: eventName,
         image: 'image.com',
@@ -38,8 +39,7 @@ describe('event routes', () => {
         ageMin: 2,
         ageMax: 14,
         price: 100,
-        liability: true,
-        token: currentUser.token
+        liability: true
       });
   };
 
@@ -112,9 +112,9 @@ describe('event routes', () => {
       .then(eventRes => {
         return request(app)
           .patch(`/events/${eventRes.body._id}`)
+          .set('Authorization', `Bearer ${currentUser.token}`)
           .send({
-            price: 200,
-            token: currentUser.token
+            price: 200
           })
           .then(patchedEvent => expect(patchedEvent.body.price).toEqual(200));
       });
@@ -127,9 +127,9 @@ describe('event routes', () => {
           .then(newUser => {
             return request(app)
               .patch(`/events/${newEvent.body._id}`)
+              .set('Authorization', `Bearer ${newUser.body.token}`)
               .send({
-                price: 1,
-                token: newUser.body.token
+                price: 1
               })
               .then(patchedEvent => expect(patchedEvent.body).toEqual({ error: 'Access denied' }));
           });
@@ -141,9 +141,7 @@ describe('event routes', () => {
       .then(newEvent => {
         return request(app)
           .delete(`/events/${newEvent.body._id}`)
-          .send({
-            token: currentUser.token
-          })
+          .set('Authorization', `Bearer ${currentUser.token}`)
           .then(deletedRes => expect(deletedRes.body).toEqual({ deleted: 1 }));
       });
   });
