@@ -1,34 +1,14 @@
-require('../dataHelper');
+const { createUser } = require('../dataHelper');
 const request = require('supertest');
 const app = require('../../lib/app');
-const User = require('../../lib/models/User');
 
 describe('orgs routes', () => {
   let createdUsers = null;
-  const createUser = (username, role = 'org') => User.create({
-    role,
-    username,
-    password: 'passit',
-    name: 'The Org',
-    email: 'theorg@email.com',
-    phone: '555-123-4567',
-    address: {
-      street: '123 Main St.',
-      city: 'Portland',
-      state: 'OR',
-      zip: '97203'
-    }
-  })
-    .then(user => ({
-      user: user.toJSON(),
-      token: user.authToken()
-    }))
-    .catch(err => err);
-    
+  
   beforeAll(done => {
     Promise.all(['org0', 'org1', 'org2', 'org3', 'org4'].map(username => createUser(username)))
-      .then(createdOrgs => {
-        createdUsers = createdOrgs;
+      .then(createdOrgsRes => {
+        createdUsers = createdOrgsRes.map(org => org.body);
         done();
       });
   });

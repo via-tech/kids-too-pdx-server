@@ -1,39 +1,15 @@
-require('../dataHelper');
+const { createUser } = require('../dataHelper');
 const request = require('supertest');
 const app = require('../../lib/app');
-const User = require('../../lib/models/User');
 
 describe('auth routes', () => {
   let currentUser = null;
-  const createUser = username => User.create({
-    role: 'org',
-    username,
-    password: 'passit',
-    name: 'The Org',
-    email: 'theorg@email.com',
-    phone: '555-123-4567',
-    address: {
-      street: '123 Main St.',
-      city: 'Portland',
-      state: 'OR',
-      zip: '97203'
-    }
-  })
-    .catch(err => err);
 
   beforeAll(done => {
     createUser('org1234')
-      .then(() => {
-        return request(app)
-          .post('/auth/signin')
-          .send({
-            username: 'org1234',
-            password: 'passit'
-          })
-          .then(userRes => {
-            currentUser = userRes.body;
-            done();
-          });
+      .then(userRes => {
+        currentUser = userRes.body;
+        done();
       });
   });
 
@@ -74,32 +50,29 @@ describe('auth routes', () => {
   });
 
   it('signs in to an org', () => {
-    return createUser('org123')
-      .then(() => {
-        return request(app)
-          .post('/auth/signin')
-          .send({
-            username: 'org123',
-            password: 'passit'
-          })
-          .then(res => expect(res.body).toEqual({
-            user: {
-              _id: expect.any(String),
-              role: 'org',
-              username: 'org123',
-              name: 'The Org',
-              email: 'theorg@email.com',
-              phone: '555-123-4567',
-              address: {
-                street: '123 Main St.',
-                city: 'Portland',
-                state: 'OR',
-                zip: '97203'
-              }
-            },
-            token: expect.any(String)
-          }));
-      });
+    return request(app)
+      .post('/auth/signin')
+      .send({
+        username: 'org1234',
+        password: 'passit'
+      })
+      .then(res => expect(res.body).toEqual({
+        user: {
+          _id: expect.any(String),
+          role: 'org',
+          username: 'org1234',
+          name: 'The Org',
+          email: 'org1234@email.com',
+          phone: '555-123-4567',
+          address: {
+            street: '123 Main St.',
+            city: 'Portland',
+            state: 'OR',
+            zip: '97203'
+          }
+        },
+        token: expect.any(String)
+      }));
   });
 
   it('updates user info', () => {

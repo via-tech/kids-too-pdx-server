@@ -18,16 +18,17 @@ const createUser = (username, role = 'org') => {
       role,
       username,
       password: 'passit',
-      name: 'The Wrong Org',
+      name: 'The Org',
       email: `${username}@email.com`,
-      phone: '555-123-4569',
+      phone: '555-123-4567',
       address: {
-        street: '125 Main St.',
+        street: '123 Main St.',
         city: 'Portland',
         state: 'OR',
         zip: '97203'
       }
-    });
+    })
+    .catch(err => err);
 };
 
 const createEvent = (eventName, user) => {
@@ -44,7 +45,8 @@ const createEvent = (eventName, user) => {
       ageMax: 14,
       price: 100,
       liability: true
-    });
+    })
+    .catch(err => err);
 };
 
 module.exports = {
