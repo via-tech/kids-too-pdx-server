@@ -1,6 +1,4 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const connect = require('../../lib/utils/connect');
+require('../dataHelper');
 const request = require('supertest');
 const app = require('../../lib/app');
 const User = require('../../lib/models/User');
@@ -24,7 +22,6 @@ describe('auth routes', () => {
     .catch(err => err);
 
   beforeAll(done => {
-    connect(process.env.MONGODB_URI_TEST);
     createUser('org1234')
       .then(() => {
         return request(app)
@@ -38,11 +35,6 @@ describe('auth routes', () => {
             done();
           });
       });
-  });
-
-  afterAll(done => {
-    mongoose.connection.dropDatabase()
-      .then(() => mongoose.connection.close(done));
   });
 
   it('sings up an organization', () => {

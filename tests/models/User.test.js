@@ -1,4 +1,3 @@
-require('dotenv').config();
 require('../dataHelper');
 const User = require('../../lib/models/User');
 

@@ -1,6 +1,4 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const connect = require('../../lib/utils/connect');
+require('../dataHelper');
 const request = require('supertest');
 const app = require('../../lib/app');
 const User = require('../../lib/models/User');
@@ -28,17 +26,11 @@ describe('orgs routes', () => {
     .catch(err => err);
     
   beforeAll(done => {
-    connect(process.env.MONGODB_URI_TEST);
     Promise.all(['org0', 'org1', 'org2', 'org3', 'org4'].map(username => createUser(username)))
       .then(createdOrgs => {
         createdUsers = createdOrgs;
         done();
       });
-  });
-
-  afterAll(done => {
-    mongoose.connection.dropDatabase()
-      .then(() => mongoose.connection.close(done));
   });
 
   it('gets a list of all organizations, not all users', () => {

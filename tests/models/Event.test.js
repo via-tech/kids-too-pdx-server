@@ -1,4 +1,3 @@
-require('dotenv').config();
 require('../dataHelper');
 const Event = require('../../lib/models/Event');
 

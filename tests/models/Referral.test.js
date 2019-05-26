@@ -1,4 +1,3 @@
-require('dotenv').config();
 require('../dataHelper');
 const mongoose = require('mongoose');
 const Referral = require('../../lib/models/Referral');
