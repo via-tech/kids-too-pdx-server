@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 require('dotenv').config();
-require('./lib/utils/connect')();
+require('./lib/utils/connect')(process.env.MONGODB_URI_TEST);
 const mongoose = require('mongoose');
 const dataSA = require('./lib/utils/parsers/csvParser');
 const art = require('./lib/utils/parsers/artsParser');
