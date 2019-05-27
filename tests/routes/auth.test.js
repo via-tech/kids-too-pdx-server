@@ -49,11 +49,37 @@ describe('auth routes', () => {
       }));
   });
 
-  it('signs in to an org', () => {
+  it('signs in to an org with username', () => {
     return request(app)
       .post('/auth/signin')
       .send({
         username: 'org1234',
+        password: 'passit'
+      })
+      .then(res => expect(res.body).toEqual({
+        user: {
+          _id: expect.any(String),
+          role: 'org',
+          username: 'org1234',
+          name: 'The Org',
+          email: 'org1234@email.com',
+          phone: '555-123-4567',
+          address: {
+            street: '123 Main St.',
+            city: 'Portland',
+            state: 'OR',
+            zip: '97203'
+          }
+        },
+        token: expect.any(String)
+      }));
+  });
+
+  it('signs in to an org with email', () => {
+    return request(app)
+      .post('/auth/signin')
+      .send({
+        username: 'org1234@email.com',
         password: 'passit'
       })
       .then(res => expect(res.body).toEqual({
