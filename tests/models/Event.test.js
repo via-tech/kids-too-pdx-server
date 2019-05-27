@@ -1,16 +1,7 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const connect = require('../../lib/utils/connect');
+require('../dataHelper');
 const Event = require('../../lib/models/Event');
 
 describe('Event model', () => {
-  beforeAll(() => connect(process.env.MONGODB_URI_TEST));
-
-  afterAll(done => {
-    mongoose.connection.dropDatabase()
-      .then(() => mongoose.connection.close(done));
-  });
-
   it('creates an event', () => {
     return Event.create({
       user: 'kidstoopdx@email.com',

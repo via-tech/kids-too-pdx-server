@@ -1,48 +1,16 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const connect = require('../../lib/utils/connect');
+const { createUser } = require('../dataHelper');
 const request = require('supertest');
 const app = require('../../lib/app');
-const User = require('../../lib/models/User');
 
 describe('auth routes', () => {
-  let curerntUser = null;
-  const createUser = username => User.create({
-    role: 'org',
-    username,
-    password: 'passit',
-    name: 'The Org',
-    email: 'theorg@email.com',
-    phone: '555-123-4567',
-    address: {
-      street: '123 Main St.',
-      city: 'Portland',
-      state: 'OR',
-      zip: '97203'
-    }
-  })
-    .catch(err => err);
+  let currentUser = null;
 
   beforeAll(done => {
-    connect(process.env.MONGODB_URI_TEST);
     createUser('org1234')
-      .then(() => {
-        return request(app)
-          .post('/auth/signin')
-          .send({
-            username: 'org1234',
-            password: 'passit'
-          })
-          .then(userRes => {
-            curerntUser = userRes.body;
-            done();
-          });
+      .then(userRes => {
+        currentUser = userRes.body;
+        done();
       });
-  });
-
-  afterAll(done => {
-    mongoose.connection.dropDatabase()
-      .then(() => mongoose.connection.close(done));
   });
 
   it('sings up an organization', () => {
@@ -81,38 +49,62 @@ describe('auth routes', () => {
       }));
   });
 
-  it('signs in to an org', () => {
-    return createUser('org123')
-      .then(() => {
-        return request(app)
-          .post('/auth/signin')
-          .send({
-            username: 'org123',
-            password: 'passit'
-          })
-          .then(res => expect(res.body).toEqual({
-            user: {
-              _id: expect.any(String),
-              role: 'org',
-              username: 'org123',
-              name: 'The Org',
-              email: 'theorg@email.com',
-              phone: '555-123-4567',
-              address: {
-                street: '123 Main St.',
-                city: 'Portland',
-                state: 'OR',
-                zip: '97203'
-              }
-            },
-            token: expect.any(String)
-          }));
-      });
+  it('signs in to an org with username', () => {
+    return request(app)
+      .post('/auth/signin')
+      .send({
+        username: 'org1234',
+        password: 'passit'
+      })
+      .then(res => expect(res.body).toEqual({
+        user: {
+          _id: expect.any(String),
+          role: 'org',
+          username: 'org1234',
+          name: 'The Org',
+          email: 'org1234@email.com',
+          phone: '555-123-4567',
+          address: {
+            street: '123 Main St.',
+            city: 'Portland',
+            state: 'OR',
+            zip: '97203'
+          }
+        },
+        token: expect.any(String)
+      }));
+  });
+
+  it('signs in to an org with email', () => {
+    return request(app)
+      .post('/auth/signin')
+      .send({
+        username: 'org1234@email.com',
+        password: 'passit'
+      })
+      .then(res => expect(res.body).toEqual({
+        user: {
+          _id: expect.any(String),
+          role: 'org',
+          username: 'org1234',
+          name: 'The Org',
+          email: 'org1234@email.com',
+          phone: '555-123-4567',
+          address: {
+            street: '123 Main St.',
+            city: 'Portland',
+            state: 'OR',
+            zip: '97203'
+          }
+        },
+        token: expect.any(String)
+      }));
   });
 
   it('updates user info', () => {
     return request(app)
-      .patch(`/auth/${curerntUser.user._id}`)
+      .patch(`/auth/${currentUser.user._id}`)
+      .set('Authorization', `Bearer ${currentUser.token}`)
       .send({
         username: 'orgChanged',
         role: 'admin',
@@ -124,11 +116,10 @@ describe('auth routes', () => {
           city: 'Los Angeles',
           state: 'CA',
           zip: '90210'
-        },
-        token: curerntUser.token
+        }
       })
       .then(patchRes => expect(patchRes.body).toEqual({
-        _id:  expect.any(String),
+        _id: expect.any(String),
         role: 'org',
         username: 'orgChanged',
         name: 'Changed Org',
@@ -145,13 +136,13 @@ describe('auth routes', () => {
 
   it('does not update role', () => {
     return request(app)
-      .patch(`/auth/${curerntUser.user._id}`)
+      .patch(`/auth/${currentUser.user._id}`)
+      .set('Authorization', `Bearer ${currentUser.token}`)
       .send({
-        role: 'admin',
-        token: curerntUser.token
+        role: 'admin'
       })
       .then(patchRes => expect(patchRes.body).toEqual({
-        _id:  expect.any(String),
+        _id: expect.any(String),
         role: 'org',
         username: 'orgChanged',
         name: 'Changed Org',
@@ -168,10 +159,10 @@ describe('auth routes', () => {
 
   it('updates password', () => {
     return request(app)
-      .patch(`/auth/${curerntUser.user._id}`)
+      .patch(`/auth/${currentUser.user._id}`)
+      .set('Authorization', `Bearer ${currentUser.token}`)
       .send({
-        password: 'changedPass',
-        token: curerntUser.token
+        password: 'changedPass'
       })
       .then(() => {
         return request(app)
@@ -197,6 +188,29 @@ describe('auth routes', () => {
             },
             token: expect.any(String)
           }));
+      });
+  });
+
+  it('does not update the wrong user', () => {
+    return request(app)
+      .post('/auth/signup')
+      .send({
+        role: 'org',
+        username: 'hacker123',
+        password: 'hackpass',
+        phone: '503-888-9999',
+        email: 'hackeremail@email.com'
+      })
+      .then(hackerUser => {
+        return request(app)
+          .patch(`/auth/${currentUser.user._id}`)
+          .set('Authorization', `Bearer ${hackerUser.body.token}`)
+          .send({
+            name: 'Hacker Org',
+            phone: '503-555-1234',
+            username: 'hackerOrg'
+          })
+          .then(patchedRes => expect(patchedRes.body).toEqual({ error: 'Access denied' }));
       });
   });
 });

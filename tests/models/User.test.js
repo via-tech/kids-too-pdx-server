@@ -1,16 +1,7 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const connect = require('../../lib/utils/connect');
+require('../dataHelper');
 const User = require('../../lib/models/User');
 
 describe('User model', () => {
-  beforeAll(() => connect(process.env.MONGODB_URI_TEST));
-
-  afterAll(done => {
-    mongoose.connection.dropDatabase()
-      .then(() => mongoose.connection.close(done));
-  });
-
   it('creates a user', () => {
     return User.create({
       role: 'org',
