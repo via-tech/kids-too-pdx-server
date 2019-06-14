@@ -12,8 +12,7 @@
     "test": "jest --verbose --runInBand",
     "test:watch": "npm run test -- --watch --verbose --runInBand",
     "drop": "mongo events --eval 'db.dropDatabase()'",
-    "db-load-all": "npm run drop && npm run seed",
-    "web": "node server.js"
+    "db-load-all": "npm run drop && npm run seed"
   },
   "keywords": [],
   "author": "",
@@ -39,5 +38,8 @@
     "jest": "^24.5.0",
     "nodemon": "^1.18.10",
     "supertest": "^4.0.0"
+  },
+  "engines": {
+    "node": "10.11"
   }
 }
