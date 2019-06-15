@@ -30,6 +30,19 @@ describe('event routes', () => {
       }));
   });
 
+  it('denies invalid age range', () => {
+    return request(app)
+      .post('/events')
+      .set('Authorization', `Bearer ${currentUser.token}`)
+      .send({
+        user: currentUser.user._id,
+        ageMin: 5,
+        ageMax: 500,
+        liability: true
+      })
+      .then(res => expect(res.body).toEqual({ error: 'Invalid age range' }));
+  });
+
   it('filters an event', () => {
     return request(app)
       .get('/events/query/q?ageMin=1&ageMax=15&price=100')
