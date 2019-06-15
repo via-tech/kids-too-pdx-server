@@ -30,7 +30,7 @@ describe('event routes', () => {
       }));
   });
 
-  it('denies invalid age range', () => {
+  it('denies event with invalid age range', () => {
     return request(app)
       .post('/events')
       .set('Authorization', `Bearer ${currentUser.token}`)
@@ -41,6 +41,19 @@ describe('event routes', () => {
         liability: true
       })
       .then(res => expect(res.body).toEqual({ error: 'Invalid age range' }));
+  });
+
+  it('denies event without liability', () => {
+    return request(app)
+      .post('/events')
+      .set('Authorization', `Bearer ${currentUser.token}`)
+      .send({
+        user: currentUser.user._id,
+        ageMin: 5,
+        ageMax: 10,
+        liability: false
+      })
+      .then(res => expect(res.body).toEqual({ error: 'Liability agreement required' }));
   });
 
   it('filters an event', () => {
