@@ -16,6 +16,7 @@ const createUser = (username, name = 'The Org', role = 'org') => {
     .post('/auth/signup')
     .send({
       role,
+      adminPassCode: process.env.ADMIN_PASS_CODE,
       username,
       password: 'passit',
       name,

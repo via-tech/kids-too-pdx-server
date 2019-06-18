@@ -228,4 +228,52 @@ describe('auth routes', () => {
           .then(patchedRes => expect(patchedRes.body).toEqual({ error: 'Access denied' }));
       });
   });
+
+  it('signs up an admin', () => {
+    return createUser('admin1', 'The Admin1', 'admin')
+      .then(adminRes => expect(adminRes.body).toEqual({
+        user: {
+          _id: expect.any(String),
+          role: 'admin',
+          username: 'admin1',
+          name: 'The Admin1',
+          email: 'admin1@email.com',
+          phone: '555-123-4567',
+          address: {
+            street: '123 Main St.',
+            city: 'Portland',
+            state: 'OR',
+            zip: '97203'
+          }
+        },
+        token: expect.any(String)
+      }));
+  });
+
+  it('does not sign up inauthentic admin', () => {
+    return request(app)
+      .post('/auth/signup')
+      .send({
+        role: 'admin',
+        username: 'hacker',
+        password: 'hackpass',
+        name: 'Admin Hacker',
+        email: 'adminhacker@email.com',
+        phone: '111-123-4567',
+        address: {
+          street: '123 Main St.',
+          city: 'Portland',
+          state: 'OR',
+          zip: '97203'
+        },
+        payment: {
+          cardNumber: 1234567890123456,
+          cardName: 'Admin Hacker',
+          expDate: '01/20',
+          securityCode: 123,
+          method: 'visa'
+        }
+      })
+      .then(adminRes => expect(adminRes.body).toEqual({ error: 'Inauthentic admin' }));
+  });
 });
