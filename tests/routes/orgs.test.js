@@ -14,7 +14,7 @@ describe('orgs routes', () => {
   });
 
   it('gets a list of all organizations, not all users', () => {
-    return createUser('org5', 'inactive')
+    return createUser('org5', 'The Org5', 'inactive')
       .then(() =>
         request(app)
           .get('/orgs')

@@ -28,6 +28,13 @@ describe('auth routes', () => {
           city: 'Portland',
           state: 'OR',
           zip: '97203'
+        },
+        payment: {
+          cardNumber: 1234567890123456,
+          cardName: 'The Org2',
+          expDate: '01/20',
+          securityCode: 123,
+          method: 'visa'
         }
       })
       .then(res => expect(res.body).toEqual({
@@ -197,9 +204,17 @@ describe('auth routes', () => {
       .send({
         role: 'org',
         username: 'hacker123',
+        name: 'Hacker',
         password: 'hackpass',
         phone: '503-888-9999',
-        email: 'hackeremail@email.com'
+        email: 'hackeremail@email.com',
+        payment: {
+          cardNumber: 1234567890123456,
+          cardName: 'Hacker',
+          expDate: '01/20',
+          securityCode: 123,
+          method: 'visa'
+        }
       })
       .then(hackerUser => {
         return request(app)
