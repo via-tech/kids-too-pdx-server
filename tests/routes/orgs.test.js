@@ -36,6 +36,6 @@ describe('orgs routes', () => {
     return request(app)
       .delete(`/orgs/${user._id}`)
       .set('Authorization', `Bearer ${token}`)
-      .then(deletedRes => expect(deletedRes.body).toEqual({ code: 403, message: 'Access denied' }));
+      .then(deletedRes => expect(deletedRes.body).toEqual({ error: 'Access denied' }));
   });
 });
