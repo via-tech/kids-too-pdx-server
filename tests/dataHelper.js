@@ -11,14 +11,15 @@ afterAll(done => {
     .then(() => mongoose.connection.close(done));
 });
 
-const createUser = (username, role = 'org') => {
+const createUser = (username, name = 'The Org', role = 'org') => {
   return request(app)
     .post('/auth/signup')
     .send({
       role,
+      adminPassCode: process.env.ADMIN_PASS_CODE,
       username,
       password: 'passit',
-      name: 'The Org',
+      name,
       email: `${username}@email.com`,
       phone: '555-123-4567',
       address: {
@@ -26,6 +27,13 @@ const createUser = (username, role = 'org') => {
         city: 'Portland',
         state: 'OR',
         zip: '97203'
+      },
+      payment: {
+        cardNumber: 1234567890123456,
+        cardName: name,
+        expDate: '01/20',
+        securityCode: 123,
+        method: 'visa'
       }
     })
     .catch(err => err);

@@ -105,7 +105,7 @@ describe('event routes', () => {
   it('denies event update by wrong user', () => {
     return createEvent('The Right Event', currentUser)
       .then(newEvent => {
-        return createUser('thewronguser')
+        return createUser('hacker123', 'Hacker')
           .then(newUser => {
             return request(app)
               .patch(`/events/${newEvent.body._id}`)
