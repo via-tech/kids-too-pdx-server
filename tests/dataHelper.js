@@ -26,7 +26,7 @@ const createUser = (username, name = 'The Org', role = 'org') => {
         street: '123 Main St.',
         city: 'Portland',
         state: 'OR',
-        zip: '97203'
+        zipcode: '97203'
       },
       payment: {
         cardNumber: '1234567890123456',
@@ -34,7 +34,13 @@ const createUser = (username, name = 'The Org', role = 'org') => {
         expMonth: '01',
         expYear: '2020',
         securityCode: '123',
-        method: 'visa'
+        method: 'visa',
+        billAddress: {
+          billStreet: '123 Main St.',
+          billCity: 'Portland',
+          billState: 'OR',
+          billZipcode: '97203'
+        }
       }
     })
     .catch(err => err);

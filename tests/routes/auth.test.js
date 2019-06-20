@@ -27,7 +27,7 @@ describe('auth routes', () => {
             street: '123 Main St.',
             city: 'Portland',
             state: 'OR',
-            zip: '97203'
+            zipcode: '97203'
           }
         },
         token: expect.any(String)
@@ -53,7 +53,7 @@ describe('auth routes', () => {
             street: '123 Main St.',
             city: 'Portland',
             state: 'OR',
-            zip: '97203'
+            zipcode: '97203'
           }
         },
         token: expect.any(String)
@@ -79,7 +79,7 @@ describe('auth routes', () => {
             street: '123 Main St.',
             city: 'Portland',
             state: 'OR',
-            zip: '97203'
+            zipcode: '97203'
           }
         },
         token: expect.any(String)
@@ -205,7 +205,7 @@ describe('auth routes', () => {
             street: '123 Main St.',
             city: 'Portland',
             state: 'OR',
-            zip: '97203'
+            zipcode: '97203'
           }
         },
         token: expect.any(String)
@@ -233,7 +233,13 @@ describe('auth routes', () => {
           cardName: 'Admin Hacker',
           expDate: '01/20',
           securityCode: 123,
-          method: 'visa'
+          method: 'visa',
+          billAddress: {
+            billStreet: '123 Main St.',
+            billCity: 'Portland',
+            billState: 'OR',
+            billZipcode: '97203'
+          }
         }
       })
       .then(adminRes => expect(adminRes.body).toEqual({ error: 'Inauthentic admin' }));
