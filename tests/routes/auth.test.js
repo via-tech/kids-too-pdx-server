@@ -14,40 +14,17 @@ describe('auth routes', () => {
   });
 
   it('sings up an organization', () => {
-    return request(app)
-      .post('/auth/signup')
-      .send({
-        role: 'org',
-        username: 'org2123',
-        password: 'passit2',
-        name: 'The Org2',
-        email: 'theorg2@email.com',
-        phone: '555-123-4568',
-        address: {
-          street: '124 Main St.',
-          city: 'Portland',
-          state: 'OR',
-          zip: '97203'
-        },
-        payment: {
-          cardNumber: '1234567890123456',
-          cardName: 'The Org2',
-          expMonth: '01',
-          expYear: '2020',
-          securityCode: '123',
-          method: 'visa'
-        }
-      })
+    return createUser('org2123', 'The Org2')
       .then(res => expect(res.body).toEqual({
         user: {
           _id: expect.any(String),
           role: 'org',
           username: 'org2123',
           name: 'The Org2',
-          email: 'theorg2@email.com',
-          phone: '555-123-4568',
+          email: 'org2123@email.com',
+          phone: '555-123-4567',
           address: {
-            street: '124 Main St.',
+            street: '123 Main St.',
             city: 'Portland',
             state: 'OR',
             zip: '97203'
@@ -200,30 +177,7 @@ describe('auth routes', () => {
   });
 
   it('does not update the wrong user', () => {
-    return request(app)
-      .post('/auth/signup')
-      .send({
-        role: 'org',
-        username: 'hacker123',
-        name: 'Hacker',
-        password: 'hackpass',
-        phone: '503-888-9999',
-        email: 'hackeremail@email.com',
-        address: {
-          street: '123 Main St.',
-          city: 'Portland',
-          state: 'OR',
-          zip: '97203'
-        },
-        payment: {
-          cardNumber: '1234567890123456',
-          cardName: 'Hacker Card',
-          expMonth: '01',
-          expYear: '2020',
-          securityCode: '123',
-          method: 'visa'
-        }
-      })
+    return createUser('hacker123', 'Hacker')
       .then(hackerUser => {
         return request(app)
           .patch(`/auth/${currentUser.user._id}`)
