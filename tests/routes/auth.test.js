@@ -30,10 +30,11 @@ describe('auth routes', () => {
           zip: '97203'
         },
         payment: {
-          cardNumber: 1234567890123456,
+          cardNumber: '1234567890123456',
           cardName: 'The Org2',
-          expDate: '01/20',
-          securityCode: 123,
+          expMonth: '01',
+          expYear: '2020',
+          securityCode: '123',
           method: 'visa'
         }
       })
@@ -208,11 +209,18 @@ describe('auth routes', () => {
         password: 'hackpass',
         phone: '503-888-9999',
         email: 'hackeremail@email.com',
+        address: {
+          street: '123 Main St.',
+          city: 'Portland',
+          state: 'OR',
+          zip: '97203'
+        },
         payment: {
-          cardNumber: 1234567890123456,
-          cardName: 'Hacker',
-          expDate: '01/20',
-          securityCode: 123,
+          cardNumber: '1234567890123456',
+          cardName: 'Hacker Card',
+          expMonth: '01',
+          expYear: '2020',
+          securityCode: '123',
           method: 'visa'
         }
       })

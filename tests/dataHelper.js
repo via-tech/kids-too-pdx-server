@@ -29,10 +29,11 @@ const createUser = (username, name = 'The Org', role = 'org') => {
         zip: '97203'
       },
       payment: {
-        cardNumber: 1234567890123456,
+        cardNumber: '1234567890123456',
         cardName: name,
-        expDate: '01/20',
-        securityCode: 123,
+        expMonth: '01',
+        expYear: '2020',
+        securityCode: '123',
         method: 'visa'
       }
     })
