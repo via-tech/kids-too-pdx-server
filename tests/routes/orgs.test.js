@@ -33,16 +33,6 @@ describe('orgs routes', () => {
       }));
   });
 
-  it('deletes organization by id as admin', () => {
-    return createUser('admin1', 'The Admin', 'admin')
-      .then(adminRes => {
-        return request(app)
-          .delete(`/auth/${createdUsers[3].user._id}`)
-          .set('Authorization', `Bearer ${adminRes.body.token}`)
-          .then(deletedRes => expect(deletedRes.body).toEqual({ deleted: 1 }));
-      });
-  });
-
   it('does not delete organization for wrong user', () => {
     const { user } = createdUsers[0];
     const { token } = createdUsers[1];

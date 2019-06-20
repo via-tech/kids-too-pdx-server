@@ -238,4 +238,14 @@ describe('auth routes', () => {
       })
       .then(adminRes => expect(adminRes.body).toEqual({ error: 'Inauthentic admin' }));
   });
+
+  it('deletes organization by id as admin', () => {
+    return Promise.all([createUser('admin2', 'The Admin2', 'admin'), createUser('delOrg', 'Deletable Org')])
+      .then(([adminRes, orgRes]) => {
+        return request(app)
+          .delete(`/auth/${orgRes.body.user._id}`)
+          .set('Authorization', `Bearer ${adminRes.body.token}`)
+          .then(deletedRes => expect(deletedRes.body).toEqual({ deleted: 1 }));
+      });
+  });
 });
