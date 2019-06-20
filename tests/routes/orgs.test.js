@@ -35,10 +35,10 @@ describe('orgs routes', () => {
 
   it('deletes organization by id as admin', () => {
     return createUser('admin1', 'The Admin', 'admin')
-      .then(userRes => {
+      .then(adminRes => {
         return request(app)
-          .delete(`/orgs/${createdUsers[3].user._id}`)
-          .set('Authorization', `Bearer ${userRes.body.token}`)
+          .delete(`/auth/${createdUsers[3].user._id}`)
+          .set('Authorization', `Bearer ${adminRes.body.token}`)
           .then(deletedRes => expect(deletedRes.body).toEqual({ deleted: 1 }));
       });
   });
