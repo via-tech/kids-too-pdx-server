@@ -45,7 +45,6 @@ describe('orgs routes', () => {
   it('reactivates an inactive user', () => {
     return createUser('inactiveOrg', 'Inactive Org', 'inactive')
       .then(inactiveRes => {
-        // inactiveRes.body.user.role = 'inactive';
         const { token, user } = inactiveRes.body;
         return request(app)
           .post('/orgs/activate')
