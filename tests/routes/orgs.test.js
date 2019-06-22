@@ -14,7 +14,7 @@ describe('orgs routes', () => {
   });
 
   it('gets a list of all organizations, not all users', () => {
-    return createUser('org5', 'The Org5', 'inactive')
+    return createUser('admin5', 'The Admin', 'admin')
       .then(() =>
         request(app)
           .get('/orgs')
@@ -33,16 +33,6 @@ describe('orgs routes', () => {
       }));
   });
 
-  it('deletes organization by id as admin', () => {
-    return createUser('admin1', 'The Admin', 'admin')
-      .then(userRes => {
-        return request(app)
-          .delete(`/orgs/${createdUsers[3].user._id}`)
-          .set('Authorization', `Bearer ${userRes.body.token}`)
-          .then(deletedRes => expect(deletedRes.body).toEqual({ deleted: 1 }));
-      });
-  });
-
   it('does not delete organization for wrong user', () => {
     const { user } = createdUsers[0];
     const { token } = createdUsers[1];
@@ -50,5 +40,35 @@ describe('orgs routes', () => {
       .delete(`/orgs/${user._id}`)
       .set('Authorization', `Bearer ${token}`)
       .then(deletedRes => expect(deletedRes.body).toEqual({ error: 'Access denied' }));
+  });
+
+  it('reactivates an inactive user', () => {
+    return createUser('inactiveOrg', 'Inactive Org', 'inactive')
+      .then(inactiveRes => {
+        const { token, user } = inactiveRes.body;
+        return request(app)
+          .post('/orgs/activate')
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            payment: {
+              cardNumber: '1234567890123456',
+              cardName: 'Inactive Org',
+              expMonth: '01',
+              expYear: '2020',
+              securityCode: '123',
+              method: 'visa',
+              billAddress: {
+                billStreet: '123 Main St.',
+                billCity: 'Portland',
+                billState: 'OR',
+                billZipcode: '97203'
+              }
+            }
+          })
+          .then(activatedRes => expect(activatedRes.body).toEqual({
+            ...user,
+            role: 'org'
+          }));
+      });
   });
 });
