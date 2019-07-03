@@ -43,13 +43,14 @@ describe('orgs routes', () => {
   });
 
   it('reactivates an inactive user', () => {
-    return createUser('inactiveOrg', 'Inactive Org', 'inactive')
+    return createUser('inactiveOrg2', 'Inactive Org2', 'inactive')
       .then(inactiveRes => {
-        const { token, user } = inactiveRes.body;
+        const { user } = inactiveRes.body;
         return request(app)
           .post('/orgs/activate')
-          .set('Authorization', `Bearer ${token}`)
           .send({
+            username: user.username,
+            password: 'passit',
             payment: {
               cardNumber: '1234567890123456',
               cardName: 'Inactive Org',
