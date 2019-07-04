@@ -2,6 +2,9 @@ const { createUser } = require('../dataHelper');
 const request = require('supertest');
 const app = require('../../lib/app');
 
+jest.mock('../../lib/services/emails/recoverPassMail');
+jest.mock('../../lib/services/emails/sendEmail');
+
 describe('auth routes', () => {
   let currentUser = null;
 
@@ -243,6 +246,29 @@ describe('auth routes', () => {
         }
       })
       .then(adminRes => expect(adminRes.body).toEqual({ error: 'Inauthentic admin' }));
+  });
+
+  it('recovers forgotten password', () => {
+    return createUser('forgetful1', 'The Forgetful')
+      .then(() => {
+        return request(app)
+          .post('/auth/forgot')
+          .send({ username: 'forgetful1' })
+          .then(updatedRes => {
+            expect(updatedRes.body).toEqual({
+              message: 'Temporary password has been sent to forgetful1@email.com',
+              password: expect.any(String)
+            });
+
+            return request(app)
+              .post('/auth/signin')
+              .send({
+                username: 'forgetful1',
+                password: updatedRes.body.password
+              })
+              .then(userRes => expect(userRes.body.token).toBeDefined());
+          });
+      });
   });
 
   it('deletes organization by id as admin', () => {
