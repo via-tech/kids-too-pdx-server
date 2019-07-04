@@ -245,6 +245,17 @@ describe('auth routes', () => {
       .then(adminRes => expect(adminRes.body).toEqual({ error: 'Inauthentic admin' }));
   });
 
+  it('recovers forgotten password', () => {
+    return createUser('forgetful1', 'The Forgetful')
+      .then(() => {
+        return request(app)
+          .post('/auth/forgot')
+          .send({ username: 'forgetful1' })
+          .then(updatedRes => expect(updatedRes.body).toEqual({ message:
+            'Temporary password has been sent to forgetful1@email.com' }));
+      });
+  });
+
   it('deletes organization by id as admin', () => {
     return Promise.all([createUser('admin2', 'The Admin2', 'admin'), createUser('delOrg', 'Deletable Org')])
       .then(([adminRes, orgRes]) => {
