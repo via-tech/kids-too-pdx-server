@@ -2,6 +2,9 @@ const { createUser } = require('../dataHelper');
 const request = require('supertest');
 const app = require('../../lib/app');
 
+jest.mock('../../lib/services/emails/recoverPassMail');
+jest.mock('../../lib/services/emails/sendEmail');
+
 describe('auth routes', () => {
   let currentUser = null;
 
@@ -251,8 +254,12 @@ describe('auth routes', () => {
         return request(app)
           .post('/auth/forgot')
           .send({ username: 'forgetful1' })
-          .then(updatedRes => expect(updatedRes.body).toEqual({ message:
-            'Temporary password has been sent to forgetful1@email.com' }));
+          .then(updatedRes => {
+
+            expect(updatedRes.body).toEqual({
+              message: 'Temporary password has been sent to forgetful1@email.com'
+            });
+          });
       });
   });
 
