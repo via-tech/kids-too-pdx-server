@@ -255,10 +255,18 @@ describe('auth routes', () => {
           .post('/auth/forgot')
           .send({ username: 'forgetful1' })
           .then(updatedRes => {
-
             expect(updatedRes.body).toEqual({
-              message: 'Temporary password has been sent to forgetful1@email.com'
+              message: 'Temporary password has been sent to forgetful1@email.com',
+              password: expect.any(String)
             });
+
+            return request(app)
+              .post('/auth/signin')
+              .send({
+                username: 'forgetful1',
+                password: updatedRes.body.password
+              })
+              .then(userRes => expect(userRes.body.token).toBeDefined());
           });
       });
   });
