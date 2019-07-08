@@ -31,6 +31,7 @@
     "mongoose": "^5.4.19",
     "node-html-parser": "^1.1.13",
     "nodemailer": "^6.2.1",
+    "stripe": "^7.4.0",
     "superagent": "^4.1.0",
     "url": "^0.11.0"
   },
