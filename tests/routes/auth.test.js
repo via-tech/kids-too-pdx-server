@@ -16,12 +16,27 @@ describe('auth routes', () => {
       });
   });
 
-  it('sings up an organization', () => {
-    return createUser('org2123', 'The Org2')
+  it('signs up org as inactive', () => {
+    return request(app)
+      .post('/auth/signup')
+      .send({
+        role: 'org',
+        username: 'org2123',
+        password: 'passit',
+        name: 'The Org2',
+        email: 'org2123@email.com',
+        phone: '555-123-4567',
+        address: {
+          street: '123 Main St.',
+          city: 'Portland',
+          state: 'OR',
+          zipcode: '97203'
+        }
+      })
       .then(res => expect(res.body).toEqual({
         user: {
           _id: expect.any(String),
-          role: 'org',
+          role: 'inactive',
           username: 'org2123',
           name: 'The Org2',
           email: 'org2123@email.com',
@@ -95,7 +110,6 @@ describe('auth routes', () => {
       .set('Authorization', `Bearer ${currentUser.token}`)
       .send({
         username: 'orgChanged',
-        role: 'admin',
         name: 'Changed Org',
         email: 'thechangedorg@email.com',
         phone: '555-111-2222',

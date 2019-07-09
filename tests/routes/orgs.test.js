@@ -45,30 +45,17 @@ describe('orgs routes', () => {
   it('reactivates an inactive user', () => {
     return createUser('inactiveOrg2', 'Inactive Org2', 'inactive')
       .then(inactiveRes => {
-        const { user } = inactiveRes.body;
+        const { user, token } = inactiveRes.body;
         return request(app)
           .post('/orgs/activate')
           .send({
-            username: user.username,
-            password: 'passit',
-            payment: {
-              cardNumber: '1234567890123456',
-              cardName: 'Inactive Org',
-              expMonth: '01',
-              expYear: '2020',
-              securityCode: '123',
-              method: 'visa',
-              billAddress: {
-                billStreet: '123 Main St.',
-                billCity: 'Portland',
-                billState: 'OR',
-                billZipcode: '97203'
-              }
-            }
+            token,
+            stripeToken: 'tok_visa'
           })
           .then(activatedRes => expect(activatedRes.body).toEqual({
             ...user,
-            role: 'org'
+            role: 'org',
+            stripeToken: 'tok_visa'
           }));
       });
   });
