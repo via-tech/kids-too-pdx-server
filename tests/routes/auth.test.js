@@ -267,7 +267,10 @@ describe('auth routes', () => {
       .then(() => {
         return request(app)
           .post('/auth/forgot')
-          .send({ username: 'forgetful1' })
+          .send({
+            username: 'forgetful1',
+            adminPassCode: process.env.ADMIN_PASS_CODE
+          })
           .then(updatedRes => {
             expect(updatedRes.body).toEqual({
               message: 'Temporary password has been sent to forgetful1@email.com',
