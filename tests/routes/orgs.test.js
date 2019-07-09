@@ -50,12 +50,12 @@ describe('orgs routes', () => {
           .post('/orgs/activate')
           .send({
             token,
-            stripeToken: 'stripe123'
+            stripeToken: 'tok_visa'
           })
           .then(activatedRes => expect(activatedRes.body).toEqual({
             ...user,
             role: 'org',
-            stripeToken: 'stripe123'
+            stripeToken: 'tok_visa'
           }));
       });
   });
