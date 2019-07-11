@@ -42,7 +42,7 @@ describe('orgs routes', () => {
       .then(deletedRes => expect(deletedRes.body).toEqual({ error: 'Access denied' }));
   });
 
-  it('reactivates an inactive user', () => {
+  it('activates an inactive user', () => {
     return createUser('inactiveOrg2', 'Inactive Org2', 'inactive')
       .then(inactiveRes => {
         const { user, token } = inactiveRes.body;
@@ -55,7 +55,8 @@ describe('orgs routes', () => {
           .then(activatedRes => expect(activatedRes.body).toEqual({
             ...user,
             role: 'org',
-            stripeToken: 'tok_visa'
+            stripeToken: 'tok_visa',
+            stripeSubId: expect.any(String)
           }));
       });
   });
