@@ -121,18 +121,21 @@ describe('auth routes', () => {
         }
       })
       .then(patchRes => expect(patchRes.body).toEqual({
-        _id: expect.any(String),
-        role: 'org',
-        username: 'orgChanged',
-        name: 'Changed Org',
-        email: 'thechangedorg@email.com',
-        phone: '555-111-2222',
-        address: {
-          street: '456 Main St.',
-          city: 'Los Angeles',
-          state: 'CA',
-          zip: '90210'
-        }
+        user: {
+          _id: expect.any(String),
+          role: 'org',
+          username: 'orgChanged',
+          name: 'Changed Org',
+          email: 'thechangedorg@email.com',
+          phone: '555-111-2222',
+          address: {
+            street: '456 Main St.',
+            city: 'Los Angeles',
+            state: 'CA',
+            zip: '90210'
+          }
+        },
+        token: expect.any(String)
       }));
   });
 
@@ -144,18 +147,21 @@ describe('auth routes', () => {
         role: 'admin'
       })
       .then(patchRes => expect(patchRes.body).toEqual({
-        _id: expect.any(String),
-        role: 'org',
-        username: 'orgChanged',
-        name: 'Changed Org',
-        email: 'thechangedorg@email.com',
-        phone: '555-111-2222',
-        address: {
-          street: '456 Main St.',
-          city: 'Los Angeles',
-          state: 'CA',
-          zip: '90210'
-        }
+        user: {
+          _id: expect.any(String),
+          role: 'org',
+          username: 'orgChanged',
+          name: 'Changed Org',
+          email: 'thechangedorg@email.com',
+          phone: '555-111-2222',
+          address: {
+            street: '456 Main St.',
+            city: 'Los Angeles',
+            state: 'CA',
+            zip: '90210'
+          }
+        },
+        token: expect.any(String)
       }));
   });
 
