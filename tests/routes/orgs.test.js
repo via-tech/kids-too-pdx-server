@@ -36,8 +36,11 @@ describe('orgs routes', () => {
           .delete(`/orgs/${user._id}`)
           .set('Authorization', `Bearer ${token}`)
           .then(deletedRes => expect(deletedRes.body).toEqual({
-            ...user,
-            role: 'inactive'
+            user: {
+              ...user,
+              role: 'inactive'
+            },
+            token: expect.any(String)
           }));
       });
   });
