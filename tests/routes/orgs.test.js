@@ -26,6 +26,7 @@ describe('orgs routes', () => {
 
   it('deletes organization by id as org', done => {
     const { token } = createdUsers[3];
+
     return request(app)
       .post('/orgs/activate')
       .send({
@@ -55,32 +56,38 @@ describe('orgs routes', () => {
   it('does not delete organization for wrong user', () => {
     const { user } = createdUsers[0];
     const { token } = createdUsers[1];
+
     return request(app)
       .delete(`/orgs/${user._id}`)
       .set('Authorization', `Bearer ${token}`)
       .then(deletedRes => expect(deletedRes.body).toEqual({ error: 'Access denied' }));
   });
 
-  it('activates an inactive user', () => {
+  it('activates an inactive user', done => {
     return createUser('inactiveOrg2', 'Inactive Org2', 'inactive')
       .then(inactiveRes => {
         const { user, token } = inactiveRes.body;
+
         return request(app)
           .post('/orgs/activate')
           .send({
             token,
             stripeToken: 'tok_visa'
           })
-          .then(activatedRes => expect(activatedRes.body).toEqual({
-            user: {
-              ...user,
-              role: 'org',
-              stripeToken: 'tok_visa',
-              stripeSubId: expect.any(String)
-            },
-            token: expect.any(String),
-            previewUrl: expect.any(String)
-          }));
+          .then(activatedRes => {
+            expect(activatedRes.body).toEqual({
+              user: {
+                ...user,
+                role: 'org',
+                stripeToken: 'tok_visa',
+                stripeSubId: expect.any(String)
+              },
+              token: expect.any(String),
+              previewUrl: expect.any(String)
+            });
+
+            done();
+          });
       });
   });
 });
