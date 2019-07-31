@@ -29,7 +29,10 @@ const createUser = (username, name = 'The Org', role = 'org') => {
         zipcode: '97203'
       }
     })
-    .catch(err => err);
+    .then(res => res)
+    .catch(err => {
+      throw err;
+    });
 };
 
 const createEvent = (eventName, user) => {
