@@ -51,7 +51,7 @@ describe('orgs routes', () => {
             done();
           });
       });
-  });
+  }, 10000);
 
   it('does not delete organization for wrong user', () => {
     const { user } = createdUsers[0];
@@ -89,5 +89,5 @@ describe('orgs routes', () => {
             done();
           });
       });
-  });
+  }, 10000);
 });
