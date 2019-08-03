@@ -63,7 +63,7 @@ describe('orgs routes', () => {
       .then(deletedRes => expect(deletedRes.body).toEqual({ error: 'Access denied' }));
   });
 
-  it('activates an inactive user', done => {
+  it('submits payment for an inactive user', done => {
     return createUser('inactiveOrg2', 'Inactive Org2', 'inactive')
       .then(inactiveRes => {
         const { user, token } = inactiveRes.body;
@@ -78,7 +78,6 @@ describe('orgs routes', () => {
             expect(activatedRes.body).toEqual({
               user: {
                 ...user,
-                role: 'org',
                 stripeToken: 'tok_visa',
                 stripeSubId: expect.any(String)
               },
@@ -87,6 +86,40 @@ describe('orgs routes', () => {
             });
 
             done();
+          });
+      });
+  }, 10000);
+
+  it('verifies email and activates user', done => {
+    return createUser('inactiveOrg3', 'Inactive Org3', 'inactive')
+      .then(inactiveRes => {
+        const { user, token } = inactiveRes.body;
+
+        return request(app)
+          .post('/orgs/activate')
+          .send({
+            token,
+            stripeToken: 'tok_visa',
+            adminPassCode: process.env.ADMIN_PASS_CODE
+          })
+          .then(activeRes => {
+            const { code } = activeRes.body;
+
+            return request(app)
+              .get(`/orgs/verify-email?userId=${user._id}&code=${code}`)
+              .then(verifiedRes => {
+                expect(verifiedRes.body).toEqual({
+                  user: {
+                    ...user,
+                    role: 'org',
+                    stripeToken: 'tok_visa',
+                    stripeSubId: expect.any(String)
+                  },
+                  token: expect.any(String)
+                });
+
+                done();
+              });
           });
       });
   }, 10000);
