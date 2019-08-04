@@ -4,14 +4,14 @@ const app = require('../../lib/app');
 const Activate = require('../../lib/models/Activate');
 
 jest.mock('../../lib/services/emails/configureMail');
+jest.mock('../../lib/middleware/activateOrg');
 
-const submitPayment = ({ token, adminPassCode }) => {
+const submitPayment = ({ token }) => {
   return request(app)
     .post('/activate/payment')
     .send({
       token,
-      stripeToken: 'tok_visa',
-      adminPassCode: adminPassCode ? process.env.ADMIN_PASS_CODE : null
+      stripeToken: 'tok_visa'
     })
     .catch(err => err);
 };
@@ -22,7 +22,7 @@ describe('activate routes', () => {
       .then(inactiveRes => {
         const { user, token } = inactiveRes.body;
 
-        return submitPayment({ token, adminPassCode: false })
+        return submitPayment({ token })
           .then(activatedRes => {
             expect(activatedRes.body).toEqual({
               user: {
@@ -31,7 +31,8 @@ describe('activate routes', () => {
                 stripeSubId: expect.any(String)
               },
               token: expect.any(String),
-              previewUrl: expect.any(String)
+              previewUrl: expect.any(String),
+              code: expect.any(String)
             });
 
             done();
@@ -44,7 +45,7 @@ describe('activate routes', () => {
       .then(inactiveRes => {
         const { user, token } = inactiveRes.body;
 
-        return submitPayment({ token, adminPassCode: true })
+        return submitPayment({ token })
           .then(activeRes => {
             const { code } = activeRes.body;
 
@@ -80,7 +81,7 @@ describe('activate routes', () => {
       .then(inactiveRes => {
         const { user, token } = inactiveRes.body;
 
-        return submitPayment({ token, adminPassCode: true })
+        return submitPayment({ token })
           .then(() => {
             return request(app)
               .get(`/activate/verify-email?userId=${user._id}&code=`)
@@ -102,7 +103,7 @@ describe('activate routes', () => {
       .then(inactiveRes => {
         const { token } = inactiveRes.body;
 
-        return submitPayment({ token, adminPassCode: true })
+        return submitPayment({ token })
           .then(activeRes => {
             const { code } = activeRes.body;
 
