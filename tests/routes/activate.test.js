@@ -5,18 +5,24 @@ const Activate = require('../../lib/models/Activate');
 
 jest.mock('../../lib/services/emails/configureMail');
 
+const submitPayment = ({ token, adminPassCode }) => {
+  return request(app)
+    .post('/activate/payment')
+    .send({
+      token,
+      stripeToken: 'tok_visa',
+      adminPassCode: adminPassCode ? process.env.ADMIN_PASS_CODE : null
+    })
+    .catch(err => err);
+};
+
 describe('activate routes', () => {
   it('submits payment for an inactive user', done => {
     return createUser('inactiveOrg2', 'Inactive Org2', 'inactive')
       .then(inactiveRes => {
         const { user, token } = inactiveRes.body;
 
-        return request(app)
-          .post('/activate/payment')
-          .send({
-            token,
-            stripeToken: 'tok_visa'
-          })
+        return submitPayment({ token, adminPassCode: false })
           .then(activatedRes => {
             expect(activatedRes.body).toEqual({
               user: {
@@ -38,13 +44,7 @@ describe('activate routes', () => {
       .then(inactiveRes => {
         const { user, token } = inactiveRes.body;
 
-        return request(app)
-          .post('/activate/payment')
-          .send({
-            token,
-            stripeToken: 'tok_visa',
-            adminPassCode: process.env.ADMIN_PASS_CODE
-          })
+        return submitPayment({ token, adminPassCode: true })
           .then(activeRes => {
             const { code } = activeRes.body;
 
@@ -80,13 +80,7 @@ describe('activate routes', () => {
       .then(inactiveRes => {
         const { user, token } = inactiveRes.body;
 
-        return request(app)
-          .post('/activate/payment')
-          .send({
-            token,
-            stripeToken: 'tok_visa',
-            adminPassCode: process.env.ADMIN_PASS_CODE
-          })
+        return submitPayment({ token, adminPassCode: true })
           .then(() => {
             return request(app)
               .get(`/activate/verify-email?userId=${user._id}&code=`)
@@ -108,13 +102,7 @@ describe('activate routes', () => {
       .then(inactiveRes => {
         const { token } = inactiveRes.body;
 
-        return request(app)
-          .post('/activate/payment')
-          .send({
-            token,
-            stripeToken: 'tok_visa',
-            adminPassCode: process.env.ADMIN_PASS_CODE
-          })
+        return submitPayment({ token, adminPassCode: true })
           .then(activeRes => {
             const { code } = activeRes.body;
 
