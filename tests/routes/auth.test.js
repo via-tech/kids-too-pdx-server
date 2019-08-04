@@ -3,6 +3,7 @@ const request = require('supertest');
 const app = require('../../lib/app');
 
 jest.mock('../../lib/services/emails/configureMail');
+jest.mock('../../lib/middleware/recoverPass');
 
 describe('auth routes', () => {
   let currentUser = null;
