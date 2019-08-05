@@ -3,6 +3,7 @@ const request = require('supertest');
 const app = require('../../lib/app');
 
 jest.mock('../../lib/services/emails/configureMail');
+jest.mock('../../lib/middleware/recoverPass');
 
 describe('auth routes', () => {
   let currentUser = null;
@@ -273,8 +274,7 @@ describe('auth routes', () => {
         return request(app)
           .post('/auth/forgot')
           .send({
-            username: 'forgetful1',
-            adminPassCode: process.env.ADMIN_PASS_CODE
+            username: 'forgetful1'
           })
           .then(updatedRes => {
             expect(updatedRes.body).toEqual({
