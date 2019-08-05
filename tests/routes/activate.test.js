@@ -50,7 +50,7 @@ describe('activate routes', () => {
             const { code } = activeRes.body;
 
             return request(app)
-              .get(`/activate/verify-email?userId=${user._id}&code=${code}`)
+              .post(`/activate/verify-email?userId=${user._id}&code=${code}`)
               .then(verifiedRes => {
                 expect(verifiedRes.body).toEqual({
                   user: {
@@ -84,7 +84,7 @@ describe('activate routes', () => {
         return submitPayment({ token })
           .then(() => {
             return request(app)
-              .get(`/activate/verify-email?userId=${user._id}&code=`)
+              .post(`/activate/verify-email?userId=${user._id}&code=`)
               .then(verifiedRes => {
                 expect(verifiedRes.body).toEqual({
                   error: {
@@ -108,7 +108,7 @@ describe('activate routes', () => {
             const { code } = activeRes.body;
 
             return request(app)
-              .get(`/activate/verify-email?userId=12345&code=${code}`)
+              .post(`/activate/verify-email?userId=12345&code=${code}`)
               .then(verifiedRes => {
                 const { body } = verifiedRes;
                 const { actId } = body.error;
